@@ -1,7 +1,5 @@
 #include "Framework.hpp"
 #include "Game.hpp"
-#include "Player.hpp"
-#include "Key.hpp"
 
 // TODO
 // see gpu_sdl https://github.com/grimfang4/sdl-gpu
@@ -11,17 +9,20 @@
 // struct 2DSpriteAnimation - holds textures and rects for their destination look.
 // NO / struct GameObject / lets keep them in namespaces.
 // namespace Player{}; namespace PigsSwarm{};
+// Time, EaseIn, FixedLogicUpdate, 
 
 ErrorCode SDL_main(int argc, char** argv) {
 
-	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-1" };
-	const Color grayColor(23, 23, 23);
+	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-2" };
+	const Color grayColor { 23, 23, 23, 0 };
 
-	Game::Initialize(gameTitle.data(), gameTitle.size(), grayColor);
+	Game::backgroundColor = grayColor;
+	Game::Create(gameTitle.data(), gameTitle.size());
 
 	// Initializing GameObjects
-	Player::Initialize(Game::mainRenderer);
-	Key::Initialize(Game::mainRenderer);
+	Player::Create(Game::mainRenderer);
+	Key::Create(Game::mainRenderer);
+	Player2::Create();
 	// ...
 
 	Game::MainLoop();

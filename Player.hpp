@@ -25,7 +25,7 @@ namespace Player {
         //return animationFrame |= animationFrames;
     }
 
-    ErrorCode Initialize(SDL_Renderer* renderer) {
+    ErrorCode Create(SDL_Renderer* renderer) {
 
         SDL_Surface* tempSurface(IMG_Load("assets/player_atlas.png"));
         textureAtlas = SDL_CreateTextureFromSurface(renderer, tempSurface);

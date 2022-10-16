@@ -10,7 +10,7 @@ namespace Key {
 	SDL_Texture* texture;
     SDL_Rect spriteRect;
 
-    ErrorCode Initialize(SDL_Renderer* renderer) {
+    ErrorCode Create(SDL_Renderer* renderer) {
 
         SDL_Surface* tempSurface(IMG_Load("assets/key.png"));
         texture = SDL_CreateTextureFromSurface(renderer, tempSurface);

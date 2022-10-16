@@ -4,11 +4,22 @@
 
 #include "Player.hpp"
 #include "Key.hpp"
+#include "Draw.hpp"
+
+#include "Player1.hpp"
+#include "Player2.hpp"
 
 namespace Game {
 
 	SDL_Renderer* mainRenderer;
 	SDL_Window* mainWindow;
+
+	Color backgroundColor;
+
+	// Input
+	Vector2<Sint32> mousePosition;
+	const Uint8* keyboard;
+	Uint32 mouseBitMask;
 
 	ErrorCode HandleEvents() {
 		SDL_Event event;
@@ -26,39 +37,58 @@ namespace Game {
 
 	ErrorCode RenderUpdate(SDL_Renderer* const renderer) {
 
-		// Clear the current rendering target with the drawing color.
-		SDL_RenderClear(renderer);
+		Draw::Background(renderer, backgroundColor);
 
 		// This will be an array of functions to call through later.
-		Player::RenderUpdate(renderer);
-		Key::RenderUpdate(renderer);
+		//Player::RenderUpdate(renderer);
+		//Key::RenderUpdate(renderer);
+		Player1::RenderUpdate(renderer);
+		Player2::RenderUpdate(renderer);
 
 		// Update the screen with any rendering performed since the previous call.
 		SDL_RenderPresent(renderer);
-
 		return success;
 	}
 
 	// Game logic
-	ErrorCode LogicUpdate(float& frame) {
-		frame++;
+	ErrorCode LogicUpdate(const float& deltaTime) {
 
-		Player::LogicUpdate(frame);
+		// Input
+		SDL_PumpEvents();
+		{
+			mouseBitMask = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
+			keyboard = SDL_GetKeyboardState(nullptr);
+
+			//if (keyboard[SDL_SCANCODE_RETURN]) {
+			//	printf("<RETURN> is pressed.\n");
+			//}
+
+			//Player::LogicUpdate(frame);
+			Player1::LogicUpdate(deltaTime, mousePosition, mouseBitMask, keyboard);
+			Player2::LogicUpdate(deltaTime, mousePosition, mouseBitMask, keyboard);
+		}
+		
 
 		return success;
 	}
 
 	ErrorCode MainLoop() {
-		float frame(0);
+		float deltaTime(0);
+
+		// FixedLogicUpdate(); ?
+		// - if(deltaTime)
+		// - some OS integration.... winapi ? yes
+		// https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
+
 		while (HandleEvents() != failure) {
-			LogicUpdate(frame);
+			LogicUpdate(deltaTime);
 			RenderUpdate(mainRenderer);
 		}
 
 		return success;
 	}
 
-	ErrorCode Initialize(const char* gameTitle, const size& gameTitleSize, const Color& backgroundColor) {
+	ErrorCode Create(const char* gameTitle, const size& gameTitleSize) {
 
 		// Initializes SDL Library with following components.
 		if (SDL_Init(SDL_INIT_EVERYTHING) != success) {
@@ -81,8 +111,8 @@ namespace Game {
 				return failure;
 			}
 
-			// Set the color used for drawing operations.
-			SDL_SetRenderDrawColor(mainRenderer, backgroundColor.red, backgroundColor.green, backgroundColor.blue, backgroundColor.alpha);
+			// To enable alpha channel in drawings.
+			SDL_SetRenderDrawBlendMode(mainRenderer, SDL_BLENDMODE_BLEND);
 
 			return success;
 		}
