@@ -1,6 +1,11 @@
 #include "Framework.hpp"
 #include "Game.hpp"
 
+// Links
+// https://www.youtube.com/watch?v=1eaxE_waDNc
+// https://stackoverflow.com/questions/18591758/sdl2-tilemap-too-slow
+// https://www.reddit.com/r/gamedev/comments/3y1va8/sdl2_c_tile_map_most_efficient_way_to_render_lots/
+
 // TODO
 // see gpu_sdl https://github.com/grimfang4/sdl-gpu
 // hold information about vsync, fullscreen outside game namespace.
@@ -9,7 +14,8 @@
 // struct 2DSpriteAnimation - holds textures and rects for their destination look.
 // NO / struct GameObject / lets keep them in namespaces.
 // namespace Player{}; namespace PigsSwarm{};
-// Time, EaseIn, FixedLogicUpdate, 
+// FixedLogicUpdate, 
+// Have structs required for function use (said modules)
 
 ErrorCode SDL_main(int argc, char** argv) {
 
