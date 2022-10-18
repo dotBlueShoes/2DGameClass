@@ -1,5 +1,6 @@
 #pragma once
 #include "Framework.hpp"
+#include "Time.hpp"
 #include "Color.hpp"
 
 #include "Player.hpp"
@@ -73,7 +74,8 @@ namespace Game {
 	}
 
 	ErrorCode MainLoop() {
-		float deltaTime(0);
+
+		Clock::Start();
 
 		// FixedLogicUpdate(); ?
 		// - if(deltaTime)
@@ -81,7 +83,8 @@ namespace Game {
 		// https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
 
 		while (HandleEvents() != failure) {
-			LogicUpdate(deltaTime);
+			//SDL_Log("Milliseconds: %f", Clock::GetElapsedTime());
+			LogicUpdate(Clock::GetElapsedTime());
 			RenderUpdate(mainRenderer);
 		}
 
