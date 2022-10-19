@@ -1,5 +1,6 @@
 #include "Framework.hpp"
 #include "Game.hpp"
+#include "Map.hpp"
 
 // Links
 // https://www.youtube.com/watch?v=1eaxE_waDNc
@@ -19,7 +20,7 @@
 
 ErrorCode SDL_main(int argc, char** argv) {
 
-	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-2" };
+	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-3" };
 	const Color grayColor { 23, 23, 23, 0 };
 
 	Game::backgroundColor = grayColor;
@@ -29,11 +30,30 @@ ErrorCode SDL_main(int argc, char** argv) {
 	Player::Create(Game::mainRenderer);
 	Key::Create(Game::mainRenderer);
 	Player2::Create();
+	Map::Create(Game::mainRenderer);
+
+	const char* mapFile1("assets/maps/1.map");
+	const char* mapFile2("assets/maps/2.map");
+
+	std::ifstream file(mapFile1);
+	std::ifstream file2();
+
+	std::string buffor, temp;
+
+	while (std::getline(file, temp)) {
+		buffor += temp;
+		buffor += '\n';
+	}
+
+	Map::LoadMapFromString(buffor.c_str());
+	file.close();
+
 	// ...
 
 	Game::MainLoop();
 
 	// Destroing GameObjects
+	Map::Destroy();
 	Key::Destroy();
 	Player::Destroy();
 	// ...

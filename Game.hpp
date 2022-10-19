@@ -6,6 +6,7 @@
 #include "Player.hpp"
 #include "Key.hpp"
 #include "Draw.hpp"
+#include "Map.hpp"
 
 #include "Player1.hpp"
 #include "Player2.hpp"
@@ -41,10 +42,12 @@ namespace Game {
 		Draw::Background(renderer, backgroundColor);
 
 		// This will be an array of functions to call through later.
+		Map::RenderUpdate(renderer);
 		//Player::RenderUpdate(renderer);
 		//Key::RenderUpdate(renderer);
 		Player1::RenderUpdate(renderer);
 		Player2::RenderUpdate(renderer);
+		
 
 		// Update the screen with any rendering performed since the previous call.
 		SDL_RenderPresent(renderer);

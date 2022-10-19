@@ -9,6 +9,7 @@
 
 // QUICK DEBUG
 #include <iostream>
+#include <fstream>
 
 using std::array;
 using size = size_t;
