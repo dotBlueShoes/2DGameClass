@@ -3,6 +3,7 @@
 #include "Time.hpp"
 #include "Color.hpp"
 
+#include "Camera.hpp"
 #include "Player.hpp"
 #include "Key.hpp"
 #include "Draw.hpp"
@@ -17,6 +18,8 @@ namespace Game {
 	SDL_Window* mainWindow;
 
 	Color backgroundColor;
+
+	Camera::Camera camera { { 0, 0 }, { 920 , 360 } };
 
 	// Input
 	Vector2<Sint32> mousePosition;
@@ -37,16 +40,16 @@ namespace Game {
 		return success;
 	}
 
-	ErrorCode RenderUpdate(SDL_Renderer* const renderer) {
+	ErrorCode RenderUpdate(SDL_Renderer* const renderer, Camera::Camera& camera) {
 
 		Draw::Background(renderer, backgroundColor);
 
 		// This will be an array of functions to call through later.
-		Map::RenderUpdate(renderer);
+		Map::RenderUpdate(renderer, camera);
 		//Player::RenderUpdate(renderer);
 		//Key::RenderUpdate(renderer);
-		Player1::RenderUpdate(renderer);
-		Player2::RenderUpdate(renderer);
+		Player1::RenderUpdate(renderer, camera);
+		Player2::RenderUpdate(renderer, camera);
 		
 
 		// Update the screen with any rendering performed since the previous call.
@@ -68,6 +71,7 @@ namespace Game {
 			//}
 
 			//Player::LogicUpdate(frame);
+			//Camera::LogicUpdate(deltaTime, camera, keyboard);
 			Player1::LogicUpdate(deltaTime, mousePosition, mouseBitMask, keyboard);
 			Player2::LogicUpdate(deltaTime, mousePosition, mouseBitMask, keyboard);
 		}
@@ -88,13 +92,13 @@ namespace Game {
 		while (HandleEvents() != failure) {
 			//SDL_Log("Milliseconds: %f", Clock::GetElapsedTime());
 			LogicUpdate(Clock::GetElapsedTime());
-			RenderUpdate(mainRenderer);
+			RenderUpdate(mainRenderer, camera);
 		}
 
 		return success;
 	}
 
-	ErrorCode Create(const char* gameTitle, const size& gameTitleSize) {
+	ErrorCode Create(const Vector2<int>& windowSize, const char* gameTitle, const size& gameTitleSize) {
 
 		// Initializes SDL Library with following components.
 		if (SDL_Init(SDL_INIT_EVERYTHING) != success) {
@@ -104,10 +108,9 @@ namespace Game {
 
 		{
 			const int64_t initilizeOnFirstSupportingDriver(-1);
-			const uint64_t windowSizeX(920), windowSizeY(360);
 			const Uint32 rendererFlags(SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-			if ((mainWindow = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowSizeX, windowSizeY, SDL_WINDOW_SHOWN)) == NULL) {
+			if ((mainWindow = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowSize.x, windowSize.y, SDL_WINDOW_SHOWN)) == NULL) {
 				SDL_Log("Unable to create SDL window");
 				return failure;
 			}

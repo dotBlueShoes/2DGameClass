@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="Draw.hpp" />
     <ClInclude Include="Framework.hpp" />

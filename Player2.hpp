@@ -91,8 +91,9 @@ namespace Player2 {
 		return success;
 	}
 
-	ErrorCode RenderUpdate(SDL_Renderer* const renderer) {
-		Draw::Circle(renderer, position, radius, color);
+	ErrorCode RenderUpdate(SDL_Renderer* const renderer, const Camera::Camera& camera) {
+		const Vector2<float> renderedPosition{ position.x + camera.position.x, position.y + camera.position.y };
+		Draw::Circle(renderer, renderedPosition, radius, color);
 		return success;
 	}
 

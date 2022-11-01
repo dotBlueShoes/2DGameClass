@@ -22,9 +22,10 @@ ErrorCode SDL_main(int argc, char** argv) {
 
 	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-3" };
 	const Color grayColor { 23, 23, 23, 0 };
+	const Vector2<int> screenSize{ 920 , 360 };
 
 	Game::backgroundColor = grayColor;
-	Game::Create(gameTitle.data(), gameTitle.size());
+	Game::Create(screenSize, gameTitle.data(), gameTitle.size());
 
 	// Initializing GameObjects
 	Player::Create(Game::mainRenderer);
@@ -36,7 +37,6 @@ ErrorCode SDL_main(int argc, char** argv) {
 	const char* mapFile2("assets/maps/2.map");
 
 	std::ifstream file(mapFile1);
-	std::ifstream file2();
 
 	std::string buffor, temp;
 

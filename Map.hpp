@@ -1,6 +1,8 @@
 #pragma once
 #include "Framework.hpp" 
 
+#include "Camera.hpp"
+
 namespace Map {
 
 	// TEXTURE ATLAS MAP
@@ -8,15 +10,6 @@ namespace Map {
 
 	const int spritesNumber = 8;
 	SDL_Rect sprites[spritesNumber];
-
-
-	// Position of invidual sprites
-	//SDL_Rect screenPositions[] = {
-	//	{ 0, 0, 32, 32 }, // left screen corner
-	//	{ 0, 0, 32, 32 }, // left screen corner
-	//	{ 0, 0, 32, 32 }, // left screen corner
-	//	{ 0, 0, 32, 32 }, // left screen corner
-	//};
 
 	// tilemap position on the world
 	SDL_Rect screenPosition = { 0, 0, 32, 32 };
@@ -29,6 +22,8 @@ namespace Map {
 
 	const int mapSizeX = 10;
 	const int mapSizeY = 10;
+
+	const int scaller = 2;
 
 	int map[100];
 
@@ -128,15 +123,16 @@ namespace Map {
 
 	}
 
-	ErrorCode RenderUpdate(SDL_Renderer* const renderer) {
-		screenPosition.x = 0;
-		screenPosition.y = 0;
+	ErrorCode RenderUpdate(SDL_Renderer* const renderer, const Camera::Camera& camera) {
+		const Vector2 startPosition{ 0 + camera.position.x, 0 + camera.position.y };
+		screenPosition.x = startPosition.x;
+		screenPosition.y = startPosition.y;
 		for (int y = 0; y < mapSizeY; y++) {
 			for (int x = 0; x < mapSizeX; x++) {
 				SDL_RenderCopy(renderer, textureAtlas, &sprites[map[x + (y * 10)]], &screenPosition);
 				screenPosition.x += 32;
 			}
-			screenPosition.x = 0;
+			screenPosition.x = startPosition.x;
 			screenPosition.y += 32;
 		}	
 		return success;
