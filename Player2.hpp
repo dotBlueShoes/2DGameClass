@@ -25,7 +25,7 @@ namespace Player2 {
 		return success;
 	}
 
-	ErrorCode LogicUpdate(const float& deltaTime, const Vector2<Sint32>& mousePosition, const Uint32& mouseBitMask, const Uint8* const keyboard) {
+	ErrorCode LogicUpdate(const float& deltaTime, const Vector2<float>& mousePosition, const Uint32& mouseBitMask, const Uint8* const keyboard) {
 
 		// // FRAME DEPENDANT SIMPLE
 		// if ((mouseBitMask & SDL_BUTTON_LMASK) != 0) {
@@ -50,11 +50,14 @@ namespace Player2 {
 			Math::Absolute(position.x - moveDirection.x) > errorEdge ||
 			Math::Absolute(position.y - moveDirection.y) > errorEdge
 		) {
+			SDL_Log("We're moving!.");
 			position = Math::Lerp(lastPosition, moveDirection, Math::EasingFunctions::EaseOut(elapsedTime / duration));
 			elapsedTime += 0.01f;
 		} else {
 			elapsedTime = 0;
 		}
+
+		
 
 		// // FRAME INDEPENDANT / TIME DEPENDANT
 		// if ( !isMoving && (mouseBitMask & SDL_BUTTON_LMASK) != 0) {
@@ -92,8 +95,11 @@ namespace Player2 {
 	}
 
 	ErrorCode RenderUpdate(SDL_Renderer* const renderer, const Camera::Camera& camera) {
-		const Vector2<float> renderedPosition{ position.x + camera.position.x, position.y + camera.position.y };
-		Draw::Circle(renderer, renderedPosition, radius, color);
+		const Vector2<float> renderedPosition { (position.x + camera.position.x) * camera.zoom , (position.y + camera.position.y) * camera.zoom };
+		const float renderedRadious(radius * camera.zoom);
+		// (mousePosition.x / camera.zoom) - camera.position.x
+
+		Draw::Circle(renderer, renderedPosition, renderedRadious, color);
 		return success;
 	}
 

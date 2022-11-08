@@ -19,7 +19,7 @@ namespace Game {
 
 	Color backgroundColor;
 
-	Camera::Camera camera { { 0, 0 }, { 920 , 360 } };
+	Camera::Camera camera { { 0, 0 }, { 920 , 360 }, { 920 / 2 , 360 / 2 }, 1};
 
 	// Input
 	Vector2<Sint32> mousePosition;
@@ -50,10 +50,17 @@ namespace Game {
 		//Key::RenderUpdate(renderer);
 		Player1::RenderUpdate(renderer, camera);
 		Player2::RenderUpdate(renderer, camera);
-		
 
+		// Render Debug ScreenCenter
+		const Vector2<float> position { Camera::screenSize.x / 2, Camera::screenSize.y / 2 };
+		const Color color { 255, 255, 255, 100 };
+		const float radius(5);
+		Draw::Circle(renderer, position, radius, color);
+		
+		//SDL_RenderSetScale(renderer, 1.5f, 1.5f);
 		// Update the screen with any rendering performed since the previous call.
 		SDL_RenderPresent(renderer);
+		
 		return success;
 	}
 
@@ -71,9 +78,11 @@ namespace Game {
 			//}
 
 			//Player::LogicUpdate(frame);
-			//Camera::LogicUpdate(deltaTime, camera, keyboard);
-			Player1::LogicUpdate(deltaTime, mousePosition, mouseBitMask, keyboard);
-			Player2::LogicUpdate(deltaTime, mousePosition, mouseBitMask, keyboard);
+			Camera::LogicUpdate(deltaTime, camera, keyboard);
+			const Vector2 mousePositionToWorld { (mousePosition.x / camera.zoom) - camera.position.x  , (mousePosition.y / camera.zoom) - camera.position.y };
+
+			Player1::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
+			Player2::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
 		}
 		
 

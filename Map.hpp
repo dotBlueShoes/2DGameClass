@@ -11,8 +11,10 @@ namespace Map {
 	const int spritesNumber = 8;
 	SDL_Rect sprites[spritesNumber];
 
+	const int tileSize = 32;
+
 	// tilemap position on the world
-	SDL_Rect screenPosition = { 0, 0, 32, 32 };
+	SDL_Rect tileRenderScreenPosition = { 0, 0, tileSize, tileSize };
 
 	enum class TileMeaning {
 		HorizontalWall = 0,
@@ -22,8 +24,6 @@ namespace Map {
 
 	const int mapSizeX = 10;
 	const int mapSizeY = 10;
-
-	const int scaller = 2;
 
 	int map[100];
 
@@ -124,16 +124,28 @@ namespace Map {
 	}
 
 	ErrorCode RenderUpdate(SDL_Renderer* const renderer, const Camera::Camera& camera) {
-		const Vector2 startPosition{ 0 + camera.position.x, 0 + camera.position.y };
-		screenPosition.x = startPosition.x;
-		screenPosition.y = startPosition.y;
+
+		// # To dzia³a !
+		const float zoomRange(0 - 1);
+		const float screenXRange((Camera::screenSize.x / 2) - 0.0f);
+		const float screenYRange((Camera::screenSize.y / 2) - 0.0f);
+		const float newCameraPositionX((((camera.zoom - 1) * screenXRange) / zoomRange) + 0.0f);
+		const float newCameraPositionY((((camera.zoom - 1) * screenYRange) / zoomRange) + 0.0f);
+		SDL_Log("Position %f, %f", newCameraPositionX, newCameraPositionY);
+		// # 
+
+		const Vector2 startPosition { (0 + camera.position.x) + newCameraPositionX, (0 + camera.position.y) + newCameraPositionY };
+		tileRenderScreenPosition.x = startPosition.x;
+		tileRenderScreenPosition.y = startPosition.y;
+		tileRenderScreenPosition.w = tileSize * camera.zoom;
+		tileRenderScreenPosition.h = tileSize * camera.zoom;
 		for (int y = 0; y < mapSizeY; y++) {
 			for (int x = 0; x < mapSizeX; x++) {
-				SDL_RenderCopy(renderer, textureAtlas, &sprites[map[x + (y * 10)]], &screenPosition);
-				screenPosition.x += 32;
+				SDL_RenderCopy(renderer, textureAtlas, &sprites[map[x + (y * 10)]], &tileRenderScreenPosition);
+				tileRenderScreenPosition.x += tileRenderScreenPosition.w;
 			}
-			screenPosition.x = startPosition.x;
-			screenPosition.y += 32;
+			tileRenderScreenPosition.x = startPosition.x;
+			tileRenderScreenPosition.y += tileRenderScreenPosition.h;
 		}	
 		return success;
 	}
