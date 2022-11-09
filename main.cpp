@@ -20,7 +20,7 @@
 
 ErrorCode SDL_main(int argc, char** argv) {
 
-	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-3" };
+	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-4" };
 	const Color grayColor { 23, 23, 23, 0 };
 	const Vector2<int> screenSize{ 920 , 360 };
 
@@ -29,8 +29,9 @@ ErrorCode SDL_main(int argc, char** argv) {
 
 	// Initializing GameObjects
 	Player::Create(Game::mainRenderer);
+	//Player2::Create();
+	Player3::Create(Game::mainRenderer);
 	Key::Create(Game::mainRenderer);
-	Player2::Create();
 	Map::Create(Game::mainRenderer);
 
 	const char* mapFile1("assets/maps/1.map");
@@ -44,7 +45,6 @@ ErrorCode SDL_main(int argc, char** argv) {
 		buffor += temp;
 		buffor += '\n';
 	}
-
 	Map::LoadMapFromString(buffor.c_str());
 	file.close();
 
@@ -56,6 +56,7 @@ ErrorCode SDL_main(int argc, char** argv) {
 	Map::Destroy();
 	Key::Destroy();
 	Player::Destroy();
+	Player3::Destroy();
 	// ...
 
 	Game::Destroy();

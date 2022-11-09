@@ -17,7 +17,7 @@ namespace Draw {
 	}
 
 	ErrorCode Square(SDL_Renderer* const renderer, const Vector2<float>& position, const Vector2<float>& transform, const Color& color) {
-		SDL_Rect fillRect { position.x - (transform.x / 2), position.y - (transform.y / 2), transform.x, transform.y };
+		SDL_Rect fillRect { ceil(position.x - (transform.x / 2)), ceil(position.y - (transform.y / 2)), transform.x, transform.y };
 		SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, color.alpha);
 		SDL_RenderFillRect(renderer, &fillRect);
 		return success;

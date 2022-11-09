@@ -5,9 +5,9 @@
 namespace Player2 {
 
 	const Color color { 255, 255, 0, 50 };
-	const float radius(50);
+	const float radius(16);
 
-	Vector2<float> position { 100, 100 };
+	Vector2<float> position { 16 + 64, 16 + 64 };
 
 	// Frame dependent.
 	Vector2<float> moveDirection { 0, 0 };
@@ -50,7 +50,7 @@ namespace Player2 {
 			Math::Absolute(position.x - moveDirection.x) > errorEdge ||
 			Math::Absolute(position.y - moveDirection.y) > errorEdge
 		) {
-			SDL_Log("We're moving!.");
+			//SDL_Log("We're moving!.");
 			position = Math::Lerp(lastPosition, moveDirection, Math::EasingFunctions::EaseOut(elapsedTime / duration));
 			elapsedTime += 0.01f;
 		} else {
@@ -95,9 +95,9 @@ namespace Player2 {
 	}
 
 	ErrorCode RenderUpdate(SDL_Renderer* const renderer, const Camera::Camera& camera) {
-		const Vector2<float> renderedPosition { (position.x + camera.position.x) * camera.zoom , (position.y + camera.position.y) * camera.zoom };
-		const float renderedRadious(radius * camera.zoom);
-		// (mousePosition.x / camera.zoom) - camera.position.x
+		const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
+		const Vector2<float> renderedPosition { ceil((position.x + camera.position.x) * camera.zoom + cameraMoveToCenter.x),  ceil((position.y + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
+		const float renderedRadious(ceil(radius * camera.zoom));
 
 		Draw::Circle(renderer, renderedPosition, renderedRadious, color);
 		return success;

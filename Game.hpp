@@ -4,13 +4,16 @@
 #include "Color.hpp"
 
 #include "Camera.hpp"
-#include "Player.hpp"
-#include "Key.hpp"
+
 #include "Draw.hpp"
 #include "Map.hpp"
 
+#include "Player.hpp"
 #include "Player1.hpp"
 #include "Player2.hpp"
+#include "Player3.hpp"
+
+#include "Key.hpp"
 
 namespace Game {
 
@@ -19,7 +22,7 @@ namespace Game {
 
 	Color backgroundColor;
 
-	Camera::Camera camera { { 0, 0 }, { 920 , 360 }, { 920 / 2 , 360 / 2 }, 1};
+	Camera::Camera camera { { 0, 0 }, { 920 , 360 }, /*{ 920 / 2, 360 / 2},*/ 1};
 
 	// Input
 	Vector2<Sint32> mousePosition;
@@ -46,10 +49,13 @@ namespace Game {
 
 		// This will be an array of functions to call through later.
 		Map::RenderUpdate(renderer, camera);
-		//Player::RenderUpdate(renderer);
+		const SDL_Rect actor1 = Player::RenderUpdate(renderer, camera);
 		//Key::RenderUpdate(renderer);
-		Player1::RenderUpdate(renderer, camera);
-		Player2::RenderUpdate(renderer, camera);
+		//Player1::RenderUpdate(renderer, camera);
+		//Player2::RenderUpdate(renderer, camera);
+		const SDL_Rect actor2 = Player3::RenderUpdate(renderer, camera);
+
+		Camera::Camera2ActorsBoundry(camera, actor1, actor2);
 
 		// Render Debug ScreenCenter
 		const Vector2<float> position { Camera::screenSize.x / 2, Camera::screenSize.y / 2 };
@@ -77,12 +83,15 @@ namespace Game {
 			//	printf("<RETURN> is pressed.\n");
 			//}
 
-			//Player::LogicUpdate(frame);
 			Camera::LogicUpdate(deltaTime, camera, keyboard);
-			const Vector2 mousePositionToWorld { (mousePosition.x / camera.zoom) - camera.position.x  , (mousePosition.y / camera.zoom) - camera.position.y };
 
-			Player1::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
-			Player2::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
+			const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
+			const Vector2 mousePositionToWorld { ((mousePosition.x - cameraMoveToCenter.x) / camera.zoom) - camera.position.x, ((mousePosition.y - cameraMoveToCenter.y) / camera.zoom) - camera.position.y };
+
+			Player::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
+			//Player1::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
+			//Player2::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
+			Player3::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
 		}
 		
 

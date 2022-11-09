@@ -1,12 +1,16 @@
 #pragma once
 #include "Framework.hpp"
+#include "Math.hpp"
+#include "Camera.hpp"
 
-namespace Player {
+namespace Player3 {
 
     // TODO: Modules/classes/namespaces!
 
     // Position
-    SDL_Rect screenPosition { 16, 32, 64, 64 }; // left screen corner
+    SDL_Rect screenPosition { 48, 112, 64, 64 }; // left screen corner
+
+    Vector2<float> position { 48, 112 };
     const float stepSize = 2;
     const float speed = stepSize * 2;
 
@@ -20,6 +24,22 @@ namespace Player {
     int animationFrame(0);
     float counter(0);                         // TODO: in frames later in time/float.
 
+    // Frame independent.
+    Vector2<float> lastPosition { 0, 0 };
+    bool isMoving(false);
+    const float duration(1);
+    float elapsedTime(0);
+
+    // Frame dependent.
+    Vector2<float> moveDirection { 0, 0 };
+    const float errorEdge(0.5);
+
+    ErrorCode Create() {
+        moveDirection = { position.x, position.y }; // So we don't start moving to { 0, 0 } at start.
+        lastPosition = { position.x, position.y };
+        return success;
+    }
+
     const int IncrementAnimationFrame() {
         ++animationFrame;
         if (animationFrame == animationFrames) animationFrame = 0;
@@ -29,7 +49,7 @@ namespace Player {
 
     ErrorCode Create(SDL_Renderer* renderer) {
 
-        SDL_Surface* tempSurface(IMG_Load("assets/player_atlas.png"));
+        SDL_Surface* tempSurface(IMG_Load("assets/player2_atlas.png"));
         textureAtlas = SDL_CreateTextureFromSurface(renderer, tempSurface);
         SDL_FreeSurface(tempSurface);
 
@@ -75,19 +95,28 @@ namespace Player {
             IncrementAnimationFrame();
         }
 
+        if ((mouseBitMask & SDL_BUTTON_LMASK) != 0) {
+            moveDirection = mousePosition;
+            lastPosition = position;
+            elapsedTime = 0;
+        }
+        if ( // Meaning we're moving. Unit we're close enough it counts as done.
+            Math::Absolute(position.x - moveDirection.x) > errorEdge ||
+            Math::Absolute(position.y - moveDirection.y) > errorEdge
+            ) {
+            //SDL_Log("We're moving!.");
+            position = (Math::Lerp(lastPosition, moveDirection, Math::EasingFunctions::EaseOut(elapsedTime / duration)));
+            elapsedTime += 0.01f;
+        } else {
+            elapsedTime = 0;
+        }
 
-        // Player Position
-       // screenPosition.x = (int)(frame * 2.0f);
-        if (keyboard[SDL_SCANCODE_UP]) screenPosition.y -= speed;
-        if (keyboard[SDL_SCANCODE_RIGHT]) screenPosition.x += speed;
-        if (keyboard[SDL_SCANCODE_DOWN]) screenPosition.y += speed;
-        if (keyboard[SDL_SCANCODE_LEFT]) screenPosition.x -= speed;
         return success;
     }
 
     SDL_Rect RenderUpdate(SDL_Renderer* const renderer, Camera::Camera& camera) {
         const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
-        const Vector2<float> renderedPosition { ceil((screenPosition.x + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((screenPosition.y + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
+        const Vector2<float> renderedPosition { ceil((position.x - 32 + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((position.y - 48 + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
         const Vector2<float> renderedTransform { ceil(screenPosition.w * camera.zoom), ceil(screenPosition.h * camera.zoom) };
         const SDL_Rect rect { renderedPosition.x, renderedPosition.y, renderedTransform.x, renderedTransform.y };
 

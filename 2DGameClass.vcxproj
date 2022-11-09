@@ -156,6 +156,7 @@
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Player1.hpp" />
     <ClInclude Include="Player2.hpp" />
+    <ClInclude Include="Player3.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>

@@ -22,10 +22,10 @@ namespace Map {
 		ground = 2
 	};
 
-	const int mapSizeX = 10;
-	const int mapSizeY = 10;
+	const int mapSizeX = 30;
+	const int mapSizeY = 20;
 
-	int map[100];
+	int map[mapSizeX * mapSizeY];
 
 	const char const sampleMap[] =  {
 		'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '\n',
@@ -40,6 +40,8 @@ namespace Map {
 		'0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '\n',
 		'\0'
 	};
+
+	const Vector2<float> position { 0, 0 };
 
 	void LoadMapFromString(const char* inputMap) {
 		int inputIndex = 0; // range = 111;
@@ -57,7 +59,7 @@ namespace Map {
 				mapIndex++;
 			}
 			inputIndex++;
-			//SDL_Log("input %d, map %d", inputIndex, mapIndex);
+			SDL_Log("input %d, map %d", inputIndex, mapIndex);
 		}
 	}
 
@@ -124,24 +126,16 @@ namespace Map {
 	}
 
 	ErrorCode RenderUpdate(SDL_Renderer* const renderer, const Camera::Camera& camera) {
-
-		// # To dzia³a !
-		const float zoomRange(0 - 1);
-		const float screenXRange((Camera::screenSize.x / 2) - 0.0f);
-		const float screenYRange((Camera::screenSize.y / 2) - 0.0f);
-		const float newCameraPositionX((((camera.zoom - 1) * screenXRange) / zoomRange) + 0.0f);
-		const float newCameraPositionY((((camera.zoom - 1) * screenYRange) / zoomRange) + 0.0f);
-		SDL_Log("Position %f, %f", newCameraPositionX, newCameraPositionY);
-		// # 
-
-		const Vector2 startPosition { (0 + camera.position.x) + newCameraPositionX, (0 + camera.position.y) + newCameraPositionY };
+		const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
+		const Vector2<float> startPosition { ceil((position.x + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((position.y + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
+		//printf("map: %f, %f\n", startPosition.x, startPosition.y);
 		tileRenderScreenPosition.x = startPosition.x;
 		tileRenderScreenPosition.y = startPosition.y;
-		tileRenderScreenPosition.w = tileSize * camera.zoom;
-		tileRenderScreenPosition.h = tileSize * camera.zoom;
+		tileRenderScreenPosition.w = ceil(tileSize * camera.zoom);
+		tileRenderScreenPosition.h = ceil(tileSize * camera.zoom);
 		for (int y = 0; y < mapSizeY; y++) {
 			for (int x = 0; x < mapSizeX; x++) {
-				SDL_RenderCopy(renderer, textureAtlas, &sprites[map[x + (y * 10)]], &tileRenderScreenPosition);
+				SDL_RenderCopy(renderer, textureAtlas, &sprites[map[x + (y * mapSizeX)]], &tileRenderScreenPosition);
 				tileRenderScreenPosition.x += tileRenderScreenPosition.w;
 			}
 			tileRenderScreenPosition.x = startPosition.x;
