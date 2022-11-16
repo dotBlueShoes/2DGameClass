@@ -59,7 +59,7 @@ namespace Map {
 				mapIndex++;
 			}
 			inputIndex++;
-			SDL_Log("input %d, map %d", inputIndex, mapIndex);
+			//SDL_Log("input %d, map %d", inputIndex, mapIndex);
 		}
 	}
 

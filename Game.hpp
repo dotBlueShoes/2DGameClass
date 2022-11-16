@@ -55,7 +55,7 @@ namespace Game {
 		//Player2::RenderUpdate(renderer, camera);
 		const SDL_Rect actor2 = Player3::RenderUpdate(renderer, camera);
 
-		Camera::Camera2ActorsBoundry(camera, actor1, actor2);
+		Camera::Camera2ActorsBoundry(camera, actor1, Player::canMoveUp, Player::canMoveDown, actor2, Player3::canMoveUp, Player3::canMoveDown);
 
 		// Render Debug ScreenCenter
 		const Vector2<float> position { Camera::screenSize.x / 2, Camera::screenSize.y / 2 };

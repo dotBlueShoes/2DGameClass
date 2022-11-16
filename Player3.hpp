@@ -8,11 +8,13 @@ namespace Player3 {
     // TODO: Modules/classes/namespaces!
 
     // Position
-    SDL_Rect screenPosition { 48, 112, 64, 64 }; // left screen corner
+    SDL_Rect screenPosition { 0 , 0, 64, 64 }; // left screen corner
 
-    Vector2<float> position { 48, 112 };
+    Vector2<float> position { 16 + 32, 32 + 50 };
     const float stepSize = 2;
     const float speed = stepSize * 2;
+
+    bool canMoveDown = true, canMoveUp = true;
 
     // TEXTURES
     SDL_Texture* textureAtlas;
@@ -33,12 +35,6 @@ namespace Player3 {
     // Frame dependent.
     Vector2<float> moveDirection { 0, 0 };
     const float errorEdge(0.5);
-
-    ErrorCode Create() {
-        moveDirection = { position.x, position.y }; // So we don't start moving to { 0, 0 } at start.
-        lastPosition = { position.x, position.y };
-        return success;
-    }
 
     const int IncrementAnimationFrame() {
         ++animationFrame;
@@ -78,6 +74,11 @@ namespace Player3 {
         spriteClips[3].w = 32;
         spriteClips[3].h = 32;
 
+        moveDirection = position; // So we don't start moving to { 0, 0 } at start.
+        lastPosition = position;
+        //printf("Position: %f, %f\n", moveDirection.x, moveDirection.y);
+        return success;
+
         return success;
     }
 
@@ -96,9 +97,19 @@ namespace Player3 {
         }
 
         if ((mouseBitMask & SDL_BUTTON_LMASK) != 0) {
+
+            if (!canMoveUp) {
+                if (mousePosition.y > position.y)
+                    return success;
+            } else if (!canMoveDown) {
+                if (mousePosition.y < position.y)
+                    return success;
+            }
             moveDirection = mousePosition;
             lastPosition = position;
             elapsedTime = 0;
+            //printf("MousePos: %f, %f\n", mousePosition.x, mousePosition.y);
+            //printf("Position: %f, %f\n", position.x, position.y);
         }
         if ( // Meaning we're moving. Unit we're close enough it counts as done.
             Math::Absolute(position.x - moveDirection.x) > errorEdge ||
@@ -116,8 +127,11 @@ namespace Player3 {
 
     SDL_Rect RenderUpdate(SDL_Renderer* const renderer, Camera::Camera& camera) {
         const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
-        const Vector2<float> renderedPosition { ceil((position.x - 32 + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((position.y - 48 + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
+        //const Vector2<float> renderedPosition{ ceil(position.x), ceil(position.y) };
+        const Vector2<float> renderedPosition { ceil((position.x - 32 + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((position.y - 50 + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
         const Vector2<float> renderedTransform { ceil(screenPosition.w * camera.zoom), ceil(screenPosition.h * camera.zoom) };
+        //printf("screenPosition: %d, %d, %d, %d\n", screenPosition.x, screenPosition.y, screenPosition.w, screenPosition.h);
+        //printf("screenPosition: %f, %f, %f, %f\n", renderedPosition.x, renderedPosition.y, renderedTransform.x, renderedTransform.y);
         const SDL_Rect rect { renderedPosition.x, renderedPosition.y, renderedTransform.x, renderedTransform.y };
 
         SDL_RenderCopy(renderer, textureAtlas, &spriteClips[animationFrame], &rect);

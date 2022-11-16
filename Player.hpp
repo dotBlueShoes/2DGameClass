@@ -9,6 +9,7 @@ namespace Player {
     SDL_Rect screenPosition { 16, 32, 64, 64 }; // left screen corner
     const float stepSize = 2;
     const float speed = stepSize * 2;
+    bool canMoveDown = true, canMoveUp = true;
 
     // TEXTURES
     SDL_Texture* textureAtlas;
@@ -75,12 +76,10 @@ namespace Player {
             IncrementAnimationFrame();
         }
 
-
-        // Player Position
-       // screenPosition.x = (int)(frame * 2.0f);
-        if (keyboard[SDL_SCANCODE_UP]) screenPosition.y -= speed;
+            // screenPosition.x = (int)(frame * 2.0f);
+        if (canMoveUp && keyboard[SDL_SCANCODE_UP]) screenPosition.y -= speed;
         if (keyboard[SDL_SCANCODE_RIGHT]) screenPosition.x += speed;
-        if (keyboard[SDL_SCANCODE_DOWN]) screenPosition.y += speed;
+        if (canMoveDown && keyboard[SDL_SCANCODE_DOWN]) screenPosition.y += speed;
         if (keyboard[SDL_SCANCODE_LEFT]) screenPosition.x -= speed;
         return success;
     }
