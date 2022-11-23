@@ -1,65 +1,38 @@
 #include "Framework.hpp"
+#include "Window.hpp"
+#include "Object.hpp"
 #include "Game.hpp"
-#include "Map.hpp"
 
-// Links
-// https://www.youtube.com/watch?v=1eaxE_waDNc
-// https://stackoverflow.com/questions/18591758/sdl2-tilemap-too-slow
-// https://www.reddit.com/r/gamedev/comments/3y1va8/sdl2_c_tile_map_most_efficient_way_to_render_lots/
+int SDL_main(int argc, char** argv) {
 
-// TODO
-// see gpu_sdl https://github.com/grimfang4/sdl-gpu
-// hold information about vsync, fullscreen outside game namespace.
-// struct Updatable - holds function which contents are being executed inside MainUpdate. // z-layer issue
-// struct 2DSprite
-// struct 2DSpriteAnimation - holds textures and rects for their destination look.
-// NO / struct GameObject / lets keep them in namespaces.
-// namespace Player{}; namespace PigsSwarm{};
-// FixedLogicUpdate, 
-// Have structs required for function use (said modules)
+	// TODO:
+	// Do something with it...
+	srand((unsigned int)time(NULL));
 
-ErrorCode SDL_main(int argc, char** argv) {
+	// Window
+	array<char, 25> windowTitle { "2DGry-242539-Polecenie-6" };
+	const Color::Color windowColor { 23, 23, 23, 255 };
+	const Vector::Vector2<uint32> windowViewport{ 920 , 360 };
+	const Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
 
-	const array<const char, 25> gameTitle { "2DGry-242539-Polecenie-4" };
-	const Color grayColor { 23, 23, 23, 0 };
-	const Vector2<int> screenSize{ 920 , 360 };
+	// Objects
+	const Object::Object circle { 
+		Transform::zero, 
+		Color::red, 
+		Draw::Circle, 
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove 
+	};
 
-	Game::backgroundColor = grayColor;
-	Game::Create(screenSize, gameTitle.data(), gameTitle.size());
+	array<Object::Object, 1> objects { circle };
 
-	// Initializing GameObjects
-	Player::Create(Game::mainRenderer);
-	//Player2::Create();
-	Player3::Create(Game::mainRenderer);
-	Key::Create(Game::mainRenderer);
-	Map::Create(Game::mainRenderer);
+	MainWindow mainWindow;
+	Renderer mainRenderer;
 
-	const char* mapFile1("assets/maps/1.map");
-	const char* mapFile2("assets/maps/2.map");
+	// Game
+	Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
+	Game::MainLoop(mainRenderer, windowStruct.backgroundColor, objects.size(), objects.data());
+	Game::Destroy(mainWindow, mainRenderer);
 
-	std::ifstream file(mapFile1);
-
-	std::string buffor, temp;
-
-	while (std::getline(file, temp)) {
-		buffor += temp;
-		buffor += '\n';
-	}
-	Map::LoadMapFromString(buffor.c_str());
-	file.close();
-
-	// ...
-
-	Game::MainLoop();
-
-	// Destroing GameObjects
-	Map::Destroy();
-	Key::Destroy();
-	Player::Destroy();
-	Player3::Destroy();
-	// ...
-
-	Game::Destroy();
-
-	return success;
+	return 0;
 }

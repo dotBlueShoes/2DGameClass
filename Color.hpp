@@ -1,7 +1,17 @@
 #pragma once
 #include "Framework.hpp"
 
-// TODO: Could optimize the structure to possibly don't store the alpha as a template variant.
-struct Color {
-	Uint8 red = 0, green = 0, blue = 0, alpha = 255;
-};
+namespace Color {
+
+	struct Color {
+		uint8 r;
+		uint8 g;
+		uint8 b;
+		uint8 a = 255;
+	};
+
+	const Color red   { 255, 0, 0, 255 };
+	const Color green { 0, 255, 0, 255 };
+	const Color blue  { 0, 0, 255, 255 };
+
+}

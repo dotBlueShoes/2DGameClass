@@ -1,156 +1,123 @@
 #pragma once
 #include "Framework.hpp"
+#include "Window.hpp"
 #include "Time.hpp"
-#include "Color.hpp"
 
-#include "Camera.hpp"
-
+#include "Object.hpp"
 #include "Draw.hpp"
-#include "Map.hpp"
-
-#include "Player.hpp"
-#include "Player1.hpp"
-#include "Player2.hpp"
-#include "Player3.hpp"
-
-#include "Key.hpp"
 
 namespace Game {
 
-	SDL_Renderer* mainRenderer;
-	SDL_Window* mainWindow;
+	namespace Callback {
 
-	Color backgroundColor;
+		enum class Events : int64 {
+			Nothing = 1,
+			Quit = 0
+		};
 
-	Camera::Camera camera { { 0, 0 }, { 920 , 360 }, /*{ 920 / 2, 360 / 2},*/ 1};
-
-	// Input
-	Vector2<Sint32> mousePosition;
-	const Uint8* keyboard;
-	Uint32 mouseBitMask;
-
-	ErrorCode HandleEvents() {
-		SDL_Event event;
-
-		SDL_PollEvent(&event);
-		switch (event.type) {
-			case SDL_QUIT:
-				return failure;
-			default:
-				break;
+		Events HandleEvents() {
+			SDL_Event event;
+			SDL_PollEvent(&event);
+			switch (event.type) {
+			case SDL_QUIT: return Events::Quit;
+				default: return Events::Nothing;
+			}
 		}
 
-		return success;
 	}
 
-	ErrorCode RenderUpdate(SDL_Renderer* const renderer, Camera::Camera& camera) {
+	block Create(
+		const Window::WindowStruct& window,
+		const int32& initilizeOnFirstSupportingDriver,
+		const uint32& rendererFlags,
+		/*out*/ MainWindow& mainWindow,
+		/*out*/ Renderer& renderer
+	) {
+		
 
+		// Initializes SDL Library with following components.
+		//if (
+		SDL_Init(SDL_INIT_EVERYTHING);// != 1) {
+		//	SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+		//	assert(true);
+		//}
+
+		if ((mainWindow = SDL_CreateWindow(window.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window.viewport.x, window.viewport.y, SDL_WINDOW_SHOWN)) == NULL) {
+			SDL_Log("Unable to create SDL window");
+			assert(true);
+		}
+
+		if ((renderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags)) == NULL) {
+			SDL_Log("Unable to create SDL renderer");
+			assert(true);
+		}
+		
+		// To enable alpha channel in drawings.
+		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
+
+	}
+
+	void LogicUpdate(const float& deltaTime, const size& objectsCount, Object::Object* objects) {
+
+		const SDL_Rect boundry { 0, 0, 920, 360 };
+
+		for (size i = 0; i < objectsCount; i++) {
+			auto& object = objects[i];
+			const Vector::Vector2 temp = object.calculateMove(object.transform, object.moveable, deltaTime);
+			const float radius = 30;
+
+			if (temp.x < boundry.x + radius || temp.x > boundry.w - radius) // If we're outside X boundry.
+				object.moveable.direction.x *= -1;
+
+			if (temp.y < boundry.y + radius || temp.y > boundry.h - radius)	// If we're outside Y boundry.
+				object.moveable.direction.y *= -1;
+
+			if (temp.x > boundry.x + radius && temp.y > boundry.y + radius &&		// If we're in boundry.
+				temp.x < boundry.w - radius && temp.y < boundry.h - radius) {
+				object.transform.position.x = temp.x;
+				object.transform.position.y = temp.y;
+			} else {
+				//SDL_Log("temp: %f", object.moveable.direction.x);
+				//SDL_Log("temp: %f", object.moveable.direction.y);
+			}
+			
+		}
+
+	}
+
+	void RenderUpdate(const Renderer& renderer, const Color::Color& backgroundColor, const size& objectsCount, Object::Object* objects) {
 		Draw::Background(renderer, backgroundColor);
 
-		// This will be an array of functions to call through later.
-		Map::RenderUpdate(renderer, camera);
-		const SDL_Rect actor1 = Player::RenderUpdate(renderer, camera);
-		//Key::RenderUpdate(renderer);
-		//Player1::RenderUpdate(renderer, camera);
-		//Player2::RenderUpdate(renderer, camera);
-		const SDL_Rect actor2 = Player3::RenderUpdate(renderer, camera);
+		const float radius(30);
 
-		Camera::Camera2ActorsBoundry(camera, actor1, Player::canMoveUp, Player::canMoveDown, actor2, Player3::canMoveUp, Player3::canMoveDown);
-
-		// Render Debug ScreenCenter
-		const Vector2<float> position { Camera::screenSize.x / 2, Camera::screenSize.y / 2 };
-		const Color color { 255, 255, 255, 100 };
-		const float radius(5);
-		Draw::Circle(renderer, position, radius, color);
-		
-		//SDL_RenderSetScale(renderer, 1.5f, 1.5f);
-		// Update the screen with any rendering performed since the previous call.
-		SDL_RenderPresent(renderer);
-		
-		return success;
-	}
-
-	// Game logic
-	ErrorCode LogicUpdate(const float& deltaTime) {
-
-		// Input
-		SDL_PumpEvents();
-		{
-			mouseBitMask = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
-			keyboard = SDL_GetKeyboardState(nullptr);
-
-			//if (keyboard[SDL_SCANCODE_RETURN]) {
-			//	printf("<RETURN> is pressed.\n");
-			//}
-
-			Camera::LogicUpdate(deltaTime, camera, keyboard);
-
-			const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
-			const Vector2 mousePositionToWorld { ((mousePosition.x - cameraMoveToCenter.x) / camera.zoom) - camera.position.x, ((mousePosition.y - cameraMoveToCenter.y) / camera.zoom) - camera.position.y };
-
-			Player::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
-			//Player1::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
-			//Player2::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
-			Player3::LogicUpdate(deltaTime, mousePositionToWorld, mouseBitMask, keyboard);
+		for (size i = 0; i < objectsCount; i++) {
+			const auto& object = objects[i];
+			object.draw(renderer, object.transform.position, radius, object.color);
 		}
-		
 
-		return success;
+		SDL_RenderPresent(renderer);
 	}
 
-	ErrorCode MainLoop() {
-
-		Clock::Start();
+	block MainLoop(const Renderer& renderer, const Color::Color& backgroundColor, const size& objectsCount, Object::Object* objects) {
+		Time::Start();
 
 		// FixedLogicUpdate(); ?
 		// - if(deltaTime)
 		// - some OS integration.... winapi ? yes
 		// https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
 
-		while (HandleEvents() != failure) {
-			//SDL_Log("Milliseconds: %f", Clock::GetElapsedTime());
-			LogicUpdate(Clock::GetElapsedTime());
-			RenderUpdate(mainRenderer, camera);
+		while (Callback::HandleEvents() != Callback::Events::Quit) {
+			//SDL_Log("Milliseconds: %f", Time::GetElapsedTime());
+			 
+			LogicUpdate(Time::GetElapsedTime(), objectsCount, objects);
+			RenderUpdate(renderer, backgroundColor, objectsCount, objects);
 		}
-
-		return success;
 	}
 
-	ErrorCode Create(const Vector2<int>& windowSize, const char* gameTitle, const size& gameTitleSize) {
-
-		// Initializes SDL Library with following components.
-		if (SDL_Init(SDL_INIT_EVERYTHING) != success) {
-			SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-			return failure;
-		}
-
-		{
-			const int64_t initilizeOnFirstSupportingDriver(-1);
-			const Uint32 rendererFlags(SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-
-			if ((mainWindow = SDL_CreateWindow(gameTitle, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, windowSize.x, windowSize.y, SDL_WINDOW_SHOWN)) == NULL) {
-				SDL_Log("Unable to create SDL window");
-				return failure;
-			}
-
-			if ((mainRenderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags)) == NULL) {
-				SDL_Log("Unable to create SDL renderer");
-				return failure;
-			}
-
-			// To enable alpha channel in drawings.
-			SDL_SetRenderDrawBlendMode(mainRenderer, SDL_BLENDMODE_BLEND);
-
-			return success;
-		}
-
-	}
-
-	ErrorCode Destroy() {
+	block Destroy(const MainWindow& mainWindow, const Renderer& mainRenderer) {
 		SDL_DestroyWindow(mainWindow);
 		SDL_DestroyRenderer(mainRenderer);
 		SDL_Quit();
-		return success;
 	}
 
-};
+}

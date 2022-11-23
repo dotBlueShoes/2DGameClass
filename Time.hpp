@@ -1,7 +1,15 @@
 #pragma once
 #include <chrono>
 
-namespace Clock {
+// namespace Time {
+// 
+//     float elapsedTime = 0.0f;
+//     float deltaTime = 0.0f;
+//     float lastFrame = 0.0f;
+// 
+// }
+
+namespace Time {
 
 	using SystemClock = std::chrono::system_clock;
 	using TimePoint = SystemClock::time_point;

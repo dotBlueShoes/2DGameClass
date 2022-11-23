@@ -145,20 +145,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Movable.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="Draw.hpp" />
+    <ClInclude Include="Time.hpp" />
+    <ClInclude Include="Window.hpp" />
     <ClInclude Include="Framework.hpp" />
     <ClInclude Include="Game.hpp" />
-    <ClInclude Include="Key.hpp" />
-    <ClInclude Include="Map.hpp" />
-    <ClInclude Include="Math.hpp" />
-    <ClInclude Include="Player.hpp" />
-    <ClInclude Include="Player1.hpp" />
-    <ClInclude Include="Player2.hpp" />
-    <ClInclude Include="Player3.hpp" />
-    <ClInclude Include="Time.hpp" />
-    <ClInclude Include="Vector2.hpp" />
+    <ClInclude Include="Object.hpp" />
+    <ClInclude Include="Transform.hpp" />
+    <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

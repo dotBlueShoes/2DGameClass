@@ -1,42 +1,40 @@
 #pragma once
 #include "Framework.hpp"
 #include "Color.hpp"
-#include "Math.hpp"
+//#include "Math.hpp"
 
 namespace Draw {
 
 	// So that we can pass function pointers for functions in which we have defined colors.
-	using SetRendererDrawColor = ErrorCode(*)();
+	//using SetRendererDrawColor = ErrorCode(*)();
 
-	ErrorCode Background(SDL_Renderer* const renderer, const Color& color) {
+	block Background(const Renderer& renderer, const Color::Color& color) {
 		// Set the color used for drawing operations. We need to do it every time so that inner ones doesn't override.
-		SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, color.alpha);
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		// Clear the current rendering target with the drawing color.
 		SDL_RenderClear(renderer);
-		return success;
 	}
 
-	ErrorCode Square(SDL_Renderer* const renderer, const Vector2<float>& position, const Vector2<float>& transform, const Color& color) {
-		SDL_Rect fillRect { ceil(position.x - (transform.x / 2)), ceil(position.y - (transform.y / 2)), transform.x, transform.y };
-		SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, color.alpha);
-		SDL_RenderFillRect(renderer, &fillRect);
-		return success;
-	};
+	//ErrorCode Square(SDL_Renderer* const renderer, const Vector2<float>& position, const Vector2<float>& transform, const Color& color) {
+	//	SDL_Rect fillRect { ceil(position.x - (transform.x / 2)), ceil(position.y - (transform.y / 2)), transform.x, transform.y };
+	//	SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, color.alpha);
+	//	SDL_RenderFillRect(renderer, &fillRect);
+	//	return success;
+	//};
+	//
 
-	ErrorCode Circle(SDL_Renderer* const renderer, const Vector2<float>& position, const float& radius, const Color& color) {
-
-		SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, color.alpha);
+	block Circle(const Renderer& renderer, const Vector::Vector2<float>& position, const float& radius, const Color::Color& color) {
+	
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		for (int w = 0; w < radius * 2; w++) {
 			for (int h = 0; h < radius * 2; h++) {
-				int dx = radius - w; // horizontal offset
-				int dy = radius - h; // vertical offset
+				float dx = radius - w; // horizontal offset
+				float dy = radius - h; // vertical offset
 				if ((dx*dx + dy * dy) <= (radius * radius)) {
-					SDL_RenderDrawPoint(renderer, position.x + dx, position.y + dy);
+					SDL_RenderDrawPoint(renderer, (int)(position.x + dx), (int)(position.y + dy));
 				}
 			}
 		}
-
-		return success;
 	};
 
 };
