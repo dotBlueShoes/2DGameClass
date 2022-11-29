@@ -18,4 +18,8 @@ namespace Vector {
 		T x, y, z;
 	};
 
+	double LengthBetween(const Vector2<float>& origin, const Vector2<float>& destin) {
+		return sqrt(pow(destin.x - origin.x, 2) + pow(destin.y - origin.y, 2));
+	}
+
 }

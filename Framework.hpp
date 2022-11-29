@@ -9,6 +9,7 @@
 // Standard Libraries
 #include <cassert>
 #include <array>
+#include <vector>
 
 // QUICK DEBUG
 //#include <iostream>
@@ -18,6 +19,7 @@
 #define getter constexpr auto
 
 using std::array;
+using std::vector;
 using size = size_t;
 using uint32 = uint32_t;
 using uint64 = uint64_t;
@@ -28,6 +30,7 @@ using int8 = int8_t;
 
 using MainWindow = SDL_Window*;
 using Renderer = SDL_Renderer*;
+using Rectangle = SDL_Rect;
 
 //using ErrorCode = int;
 

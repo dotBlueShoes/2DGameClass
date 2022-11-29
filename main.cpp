@@ -14,17 +14,65 @@ int SDL_main(int argc, char** argv) {
 	const Color::Color windowColor { 23, 23, 23, 255 };
 	const Vector::Vector2<uint32> windowViewport{ 920 , 360 };
 	const Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
+	const float radius(30.0f);
 
 	// Objects
-	const Object::Object circle { 
-		Transform::zero, 
+	const Object::Object circle1 { 
+		{ { 100, 200 }, Transform::Rotation::zero, Transform::Scale::one },
 		Color::red, 
 		Draw::Circle, 
 		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
-		Moveable::CalculateMove 
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 0 }
 	};
 
-	array<Object::Object, 1> objects { circle };
+	const Object::Object circle2 {
+		{ { 200, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::green,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 1 }
+	};
+
+	const Object::Object circle3{
+		{ { 300, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::blue,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ -radius, -radius, radius, radius }
+	};
+
+	const Object::Object circle4{
+		{ { 400, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::red,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ -radius, -radius, radius, radius }
+	};
+
+	const Object::Object circle5{
+		{ { 500, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::red,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ -radius, -radius, radius, radius }
+	};
+
+	const Object::Object circle6{
+		{ { 600, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::red,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ -radius, -radius, radius, radius }
+	};
+
+	array<Object::Object, 2> objects { circle1, circle2 };
+	//array<Object::Object, 6> objects{ circle1, circle2, circle3, circle4, circle5, circle6 };
 
 	MainWindow mainWindow;
 	Renderer mainRenderer;

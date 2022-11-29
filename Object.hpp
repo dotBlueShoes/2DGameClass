@@ -3,6 +3,7 @@
 #include "Transform.hpp"
 #include "Movable.hpp"
 #include "Color.hpp"
+#include "Collision.hpp"
 
 namespace Object {	
 
@@ -15,6 +16,7 @@ namespace Object {
 		DrawCallback draw;
 		Moveable::Moveable moveable;
 		CalculateMoveCallback calculateMove;
+		Collision::SquareCollision collision;
 	};
 
 	//block Draw(
