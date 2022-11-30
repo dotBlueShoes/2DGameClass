@@ -14,7 +14,7 @@ int SDL_main(int argc, char** argv) {
 	const Color::Color windowColor { 23, 23, 23, 255 };
 	const Vector::Vector2<uint32> windowViewport{ 920 , 360 };
 	const Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
-	const float radius(30.0f);
+	const float radius = 30.0f;
 
 	// Objects
 	const Object::Object circle1 { 
@@ -41,38 +41,131 @@ int SDL_main(int argc, char** argv) {
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
 		Moveable::CalculateMove,
-		{ -radius, -radius, radius, radius }
+		{ { -radius, -radius, radius, radius }, 2 }
 	};
 
 	const Object::Object circle4{
 		{ { 400, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		Color::red,
+		Color::purple,
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
 		Moveable::CalculateMove,
-		{ -radius, -radius, radius, radius }
+		{ { -radius, -radius, radius, radius }, 3 }
 	};
 
 	const Object::Object circle5{
 		{ { 500, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		Color::red,
+		Color::pink,
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
 		Moveable::CalculateMove,
-		{ -radius, -radius, radius, radius }
+		{ { -radius, -radius, radius, radius }, 4 }
 	};
 
 	const Object::Object circle6{
 		{ { 600, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		Color::red,
+		Color::lightBlue,
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
 		Moveable::CalculateMove,
-		{ -radius, -radius, radius, radius }
+		{ { -radius, -radius, radius, radius }, 5 }
 	};
 
-	array<Object::Object, 2> objects { circle1, circle2 };
-	//array<Object::Object, 6> objects{ circle1, circle2, circle3, circle4, circle5, circle6 };
+	const Object::Object circle7 {
+		{ { 700, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::cyan,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 6 }
+	};
+
+	const Object::Object circle8 {
+		{ { 800, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::lightGreen,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 7 }
+	};
+
+	const Object::Object circle9 {
+		{ { 100, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::darkBlue,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 8 }
+	};
+
+	const Object::Object circle10 {
+		{ { 200, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::darkGreen,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 9 }
+	};
+
+	const Object::Object circle11 {
+		{ { 300, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::brown,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 10 }
+	};
+
+	const Object::Object circle12 {
+		{ { 400, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::orange,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 11 }
+	};
+
+	const Object::Object circle13 {
+		{ { 500, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::magenta,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 12 }
+	};
+
+	const Object::Object circle14 {
+		{ { 600, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::white,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 13 }
+	};
+
+	const Object::Object circle15 {
+		{ { 700, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::lightGray,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 14 }
+	};
+
+	const Object::Object circle16 {
+		{ { 800, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		Color::gray,
+		Draw::Circle,
+		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		Moveable::CalculateMove,
+		{ { -radius, -radius, radius, radius }, 15 }
+	};
+
+	//array<Object::Object, 2> objects { circle1, circle2 };
+	array<Object::Object, 16> objects { 
+		circle1, circle2, circle3, circle4, circle5, circle6, circle7, circle8,
+		circle9, circle10, circle11, circle12, circle13, circle14, circle15, circle16,
+	};
 
 	MainWindow mainWindow;
 	Renderer mainRenderer;

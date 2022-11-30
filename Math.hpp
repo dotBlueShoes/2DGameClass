@@ -3,8 +3,10 @@
 
 namespace Math {
 
-	//constexpr float Clamp(const float& value, const float& min, const float& max) {
-	//	if constexpr (value < min) return value
-	//}
+	float Clamp(const float& value, const float& min, const float& max) {
+		if (value < min) return min;
+		if (value > max) return max;
+		return value;
+	}
 
 }

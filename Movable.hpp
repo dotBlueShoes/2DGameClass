@@ -14,8 +14,8 @@ namespace Moveable {
 	}
 
 	constexpr const Vector::Vector2<float> CalculateMove(const Transform::Transform& transform, const Moveable& moveable, const float& deltaTime) {
-		return { transform.position.x + moveable.velocity.x * moveable.direction.x * deltaTime,
-			transform.position.y + moveable.velocity.y * moveable.direction.y * deltaTime };
+		return { transform.position.x + moveable.velocity.x * deltaTime,
+			transform.position.y + moveable.velocity.y * deltaTime };
 	}
 
 }

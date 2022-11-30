@@ -5,10 +5,13 @@
 
 #include "Object.hpp"
 #include "Draw.hpp"
+#include "Math.hpp"
 
 namespace Game {
 
 	const bool isCollisionOn(true);
+	const bool isSeperationOn(true);
+	const bool isReflectionOn(true);
 
 	namespace Callback {
 
@@ -63,7 +66,7 @@ namespace Game {
 
 		const Rectangle boundry { 0, 0, 920, 360 };
 		vector<Vector::Vector2<float>> calculatedPositions;
-		vector<Vector::Vector2<float>> finalPositions;
+		//vector<Vector::Vector2<float>> finalPositions;
 
 		// Calculate their new position.
 		for (size i = 0; i < objectsCount; i++) {
@@ -74,7 +77,7 @@ namespace Game {
 
 		// We do that so we can operate on calculatedPositions without interupting with values
 		//  calculated after collision check.
-		finalPositions = calculatedPositions;
+		//finalPositions = calculatedPositions;
 
 		// Collision Detection
 		for (size i = 0; i < objectsCount; i++) {
@@ -82,10 +85,10 @@ namespace Game {
 			const float radius = 30;
 
 			if (calculatedPositions[i].x < boundry.x + radius || calculatedPositions[i].x > boundry.w - radius)		// If we're outside X boundry.
-				object.moveable.direction.x *= -1;
+				object.moveable.velocity.x *= -1;
 
 			if (calculatedPositions[i].y < boundry.y + radius || calculatedPositions[i].y > boundry.h - radius)		// If we're outside Y boundry.
-				object.moveable.direction.y *= -1;
+				object.moveable.velocity.y *= -1;
 
 			if (calculatedPositions[i].x > boundry.x + radius && calculatedPositions[i].y > boundry.y + radius &&	// If we're in boundry.
 				calculatedPositions[i].x < boundry.w - radius && calculatedPositions[i].y < boundry.h - radius) {
@@ -106,23 +109,47 @@ namespace Game {
 							{ // Circle Collision
 								const Vector::Vector2<float> center1 = calculatedPositions[i];
 								const Vector::Vector2<float> center2 = calculatedPositions[j];
+								//const Vector::Vector2<float> collisionPoint { center1 - center2 };
 								const double lengthBetween = Vector::LengthBetween(center1, center2);
 								const double radius1 = radius;
 								const double radius2 = radius;
-								const Vector::Vector2<float> separation {
-									(center1.x - center2.x) / lengthBetween * (radius1 + radius2 - lengthBetween),
-									(center1.y - center2.y) / lengthBetween * (radius1 + radius2 - lengthBetween)
+								Vector::Vector2<float> separation { // simple normalization
+									(center1.x - center2.x) / (float)lengthBetween, // *(radius1 + radius2 - lengthBetween),
+									(center1.y - center2.y) / (float)lengthBetween  // *(radius1 + radius2 - lengthBetween)
 								};
 								
 								if (lengthBetween < radius1 + radius2) {
-									SDL_Log("Separation: %f, %f", separation.x, separation.y);
-									SDL_Log("Direction1: %f, %f", object.moveable.direction.x, object.moveable.direction.y);
-									SDL_Log("Direction2: %f, %f", other.moveable.direction.x, other.moveable.direction.y);
-									SDL_Log("Velocity1: %f, %f", object.moveable.velocity.x, object.moveable.velocity.y);
-									SDL_Log("Velocity2: %f, %f", other.moveable.velocity.x, other.moveable.velocity.y);
-									object.moveable.direction.x *= -1;
-									object.moveable.direction.y *= -1;
-									finalPositions[i] = object.calculateMove(object.transform, object.moveable, deltaTime);
+									//SDL_Log("Separation: %f, %f", separation.x, separation.y);
+									//SDL_Log("Velocity1: %f, %f", object.moveable.velocity.x, object.moveable.velocity.y);
+									//SDL_Log("Velocity2: %f, %f", other.moveable.velocity.x, other.moveable.velocity.y);
+
+									// Separate balls
+									if (isSeperationOn) {
+										//finalPositions[i] = Vector::Addition(calculatedPositions[i], { separation.x * (float)(radius2 - lengthBetween * 0.5f), separation.y * (float)(radius2 - lengthBetween * 0.5f) });
+										//finalPositions[j] = Vector::Subtract(calculatedPositions[j], { separation.x * (float)(radius1 - lengthBetween * 0.5f), separation.y * (float)(radius1 - lengthBetween * 0.5f) });
+										object.transform.position = Vector::Addition(object.transform.position, { separation.x * (float)(radius2 - lengthBetween * 0.5f), separation.y * (float)(radius2 - lengthBetween * 0.5f) });
+										other.transform.position = Vector::Subtract(other.transform.position, { separation.x * (float)(radius1 - lengthBetween * 0.5f), separation.y * (float)(radius1 - lengthBetween * 0.5f) });
+									}
+
+									// Reflect balls
+									if (isReflectionOn) {
+
+										//velocity = velocity - collisionPoint * Vector2::DotProduct(velocity, collisionPoint) * 2.0;
+										//collisionPoint *= -1.0f;
+										//b.velocity = b.velocity - collisionPoint * Vector2::DotProduct(b.velocity, collisionPoint) * 2.0;
+
+										const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveable.velocity, separation) * 2.0f);
+										object.moveable.velocity = Vector::Subtract(object.moveable.velocity, offset1);
+
+										separation = Vector::Vector2<float>{ separation.x * -1.0f, separation.y * -1.0f };
+
+										const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveable.velocity, separation) * 2.0f);
+										other.moveable.velocity = Vector::Subtract(other.moveable.velocity, offset2);
+									}
+
+									//object.moveable.velocity.x *= -1;
+									//object.moveable.velocity.y *= -1;
+									calculatedPositions[i] = object.calculateMove(object.transform, object.moveable, deltaTime);
 								}
 							}
 
@@ -142,13 +169,19 @@ namespace Game {
 
 				}
 
-				object.transform.position.x = finalPositions[i].x;
-				object.transform.position.y = finalPositions[i].y;
-			} else { // We hit the boundry
-
+				//object.transform.position.x = finalPositions[i].x;
+				//object.transform.position.y = finalPositions[i].y;
+			} else { // We're outside! hit the boundry
+				// if we somehow end up here we should make it back with some logic to the boundry
+				// Structure overall could be better theres no need for some objects to fall through this if statement..
+				SDL_Log("We're HERE !!!!");
+				object.transform.position.x = Math::Clamp(object.transform.position.x, boundry.x + radius, boundry.w - radius);
+				object.transform.position.y = Math::Clamp(object.transform.position.y, boundry.y + radius, boundry.h - radius);
+				return;
 			}
 
-
+			object.transform.position.x = calculatedPositions[i].x;
+			object.transform.position.y = calculatedPositions[i].y;
 			
 		}
 
