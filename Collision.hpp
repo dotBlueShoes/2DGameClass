@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Collision {
 
 	struct CircleCollision {

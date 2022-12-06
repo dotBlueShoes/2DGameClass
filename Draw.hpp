@@ -15,16 +15,15 @@ namespace Draw {
 		SDL_RenderClear(renderer);
 	}
 
-	//ErrorCode Square(SDL_Renderer* const renderer, const Vector2<float>& position, const Vector2<float>& transform, const Color& color) {
-	//	SDL_Rect fillRect { ceil(position.x - (transform.x / 2)), ceil(position.y - (transform.y / 2)), transform.x, transform.y };
-	//	SDL_SetRenderDrawColor(renderer, color.red, color.green, color.blue, color.alpha);
-	//	SDL_RenderFillRect(renderer, &fillRect);
-	//	return success;
-	//};
-	//
+	block Square(const Renderer& renderer, const Vector::Vector2<float>& position, void* nArea, const Color::Color& color) {
+		const auto& area = *(Vector::Vector2<float>*)(nArea);
+		const Rectangle fillRect { ceil(position.x - (area.x / 2)), ceil(position.y - (area.y / 2)), area.x, area.y };
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_RenderFillRect(renderer, &fillRect);
+	};
 
-	block Circle(const Renderer& renderer, const Vector::Vector2<float>& position, const float& radius, const Color::Color& color) {
-	
+	block Circle(const Renderer& renderer, const Vector::Vector2<float>& position, void* nRadius, const Color::Color& color) {
+		const auto& radius = *(float*)(nRadius);
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		for (int w = 0; w < radius * 2; w++) {
 			for (int h = 0; h < radius * 2; h++) {

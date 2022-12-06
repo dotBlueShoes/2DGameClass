@@ -4,14 +4,16 @@
 #include "Movable.hpp"
 #include "Color.hpp"
 #include "Collision.hpp"
+#include "ObjectType.hpp"
 
 namespace Object {	
 
-	using DrawCallback = void (*)(const Renderer&, const Vector::Vector2<float>&, const float&, const Color::Color&);
+	using DrawCallback = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
 	using CalculateMoveCallback = const Vector::Vector2<float> (*)(const Transform::Transform& transform, const Moveable::Moveable& moveable, const float& deltaTime);
 
 	struct Object {
 		Transform::Transform transform;
+		ObjectType::ObjectType type;
 		Color::Color color;
 		DrawCallback draw;
 		Moveable::Moveable moveable;

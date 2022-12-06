@@ -32,7 +32,9 @@ using MainWindow = SDL_Window*;
 using Renderer = SDL_Renderer*;
 using Rectangle = SDL_Rect;
 
-//using ErrorCode = int;
-
-//template <size count>
-//using string = array<const char, count>;
+#ifdef NDEBUG
+const bool debugLayer = false;
+#endif
+#ifndef NDEBUG
+const bool debugLayer = true;
+#endif

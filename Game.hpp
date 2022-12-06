@@ -10,8 +10,8 @@
 namespace Game {
 
 	const bool isCollisionOn(true);
-	const bool isSeperationOn(true);
-	const bool isReflectionOn(true);
+	bool isSeperationOn(true);
+	bool isReflectionOn(true);
 
 	namespace Callback {
 
@@ -24,7 +24,16 @@ namespace Game {
 			SDL_Event event;
 			SDL_PollEvent(&event);
 			switch (event.type) {
-			case SDL_QUIT: return Events::Quit;
+				case SDL_KEYDOWN: {
+					switch (event.key.keysym.scancode) {
+						case SDL_SCANCODE_1:
+							isSeperationOn ? isSeperationOn = false : isSeperationOn = true;
+						case SDL_SCANCODE_2:
+							isReflectionOn ? isReflectionOn = false : isReflectionOn = true;
+					}
+					return Events::Nothing;
+				}
+				case SDL_QUIT: return Events::Quit;
 				default: return Events::Nothing;
 			}
 		}
@@ -39,34 +48,229 @@ namespace Game {
 		/*out*/ Renderer& renderer
 	) {
 		
-
 		// Initializes SDL Library with following components.
-		//if (
-		SDL_Init(SDL_INIT_EVERYTHING);// != 1) {
-		//	SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-		//	assert(true);
-		//}
-
-		if ((mainWindow = SDL_CreateWindow(window.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window.viewport.x, window.viewport.y, SDL_WINDOW_SHOWN)) == NULL) {
-			SDL_Log("Unable to create SDL window");
-			assert(true);
+		if constexpr (debugLayer) {
+			if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
+				SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+				assert(false);
+			}
+			if ((mainWindow = SDL_CreateWindow(window.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window.viewport.x, window.viewport.y, SDL_WINDOW_SHOWN)) == NULL) {
+				SDL_Log("Unable to create SDL window");
+				assert(false);
+			}
+			if ((renderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags)) == NULL) {
+				SDL_Log("Unable to create SDL renderer");
+				assert(false);
+			}
+		} else {
+			SDL_Init(SDL_INIT_EVERYTHING);
+			mainWindow = SDL_CreateWindow(window.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window.viewport.x, window.viewport.y, SDL_WINDOW_SHOWN);
+			renderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags);
 		}
 
-		if ((renderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags)) == NULL) {
-			SDL_Log("Unable to create SDL renderer");
-			assert(true);
-		}
-		
 		// To enable alpha channel in drawings.
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
 	}
 
-	void LogicUpdate(const float& deltaTime, const size& objectsCount, Object::Object* objects) {
+	void CollideCircle(
+		const float& deltaTime,
+		const size& objectsCount,
+		/* out */ Object::Object* objects,
+		const size& current,
+		/* out */ vector<Vector::Vector2<float>>& calculatedPositions
+	) {
+		auto& object = objects[current];
+		auto& calculatedPosition = calculatedPositions[current];
+		const auto& type = (ObjectType::Circle*)(object.type.representation);
+		const auto& radius = type->radius;
+		
 
-		const Rectangle boundry { 0, 0, 920, 360 };
+		// COLLISION [ IN BOUNDRY CHECKS ]
+		const Rectangle boundry{ 0, 0, 920, 360 }; // It will be outside later
+		if (calculatedPosition.x < boundry.x + radius || calculatedPosition.x > boundry.w - radius)		// If we're outside X boundry.
+			object.moveable.velocity.x *= -1;
+
+		if (calculatedPosition.y < boundry.y + radius || calculatedPosition.y > boundry.h - radius)		// If we're outside Y boundry.
+			object.moveable.velocity.y *= -1;
+
+		if (calculatedPosition.x > boundry.x + radius && calculatedPosition.y > boundry.y + radius &&	// If we're in boundry.
+			calculatedPosition.x < boundry.w - radius && calculatedPosition.y < boundry.h - radius
+		) {
+
+			// COLLISION [ WITH OTHER CHECKS ]
+			for (size i = 0; i < objectsCount; i++) {
+				auto& other = objects[i];
+				const auto& otherType = (ObjectType::Circle*)(other.type.representation);
+
+				if (object.collision.id != other.collision.id &&
+					object.type.type == other.type.type
+				) {
+					const auto& otherRadius = otherType->radius;
+					auto& otherCalculatedPosition = calculatedPositions[i];
+
+					const Vector::Vector2<float>& center1 = calculatedPosition;
+					const Vector::Vector2<float>& center2 = otherCalculatedPosition;
+					const double lengthBetween = Vector::LengthBetween(center1, center2);
+
+					Vector::Vector2<float> separation{ // simple normalization
+						(center1.x - center2.x) / (float)lengthBetween,
+						(center1.y - center2.y) / (float)lengthBetween
+					};
+
+					// Collision Detected !
+					if (lengthBetween < radius + otherRadius) {
+						//SDL_Log("Separation: %f, %f", separation.x, separation.y);
+						//SDL_Log("Velocity1: %f, %f", object.moveable.velocity.x, object.moveable.velocity.y);
+						//SDL_Log("Velocity2: %f, %f", other.moveable.velocity.x, other.moveable.velocity.y);
+
+						if (isSeperationOn) {
+							//object.transform.position = Vector::Addition(object.transform.position, { separation.x * (float)(radius2 - lengthBetween * 0.5f), separation.y * (float)(radius2 - lengthBetween * 0.5f) });
+							//other.transform.position = Vector::Subtract(other.transform.position, { separation.x * (float)(radius1 - lengthBetween * 0.5f), separation.y * (float)(radius1 - lengthBetween * 0.5f) });
+							calculatedPosition = Vector::Addition(
+								object.transform.position, { 
+									separation.x * (float)(otherRadius - lengthBetween * 0.5f), 
+									separation.y * (float)(otherRadius - lengthBetween * 0.5f) 
+								}
+							);
+
+							otherCalculatedPosition = Vector::Subtract(
+								other.transform.position, { 
+									separation.x * (float)(radius - lengthBetween * 0.5f), 
+									separation.y * (float)(radius - lengthBetween * 0.5f) 
+								}
+							);
+						}
+
+						if (isReflectionOn) {
+							//SDL_Log("Object: %d, Other: %d", (int32)object.collision.id, (int32)other.collision.id);
+
+							const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveable.velocity, separation) * 2.0f);
+							object.moveable.velocity = Vector::Subtract(object.moveable.velocity, offset1);
+
+							separation = Vector::Vector2<float>{ separation.x * -1.0f, separation.y * -1.0f };
+
+							const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveable.velocity, separation) * 2.0f);
+							other.moveable.velocity = Vector::Subtract(other.moveable.velocity, offset2);
+
+							//SDL_Log("Object velocity: %f %f", object.moveable.velocity.x, object.moveable.velocity.y);
+							//SDL_Log("Other velocity: %f %f", other.moveable.velocity.x, other.moveable.velocity.y);
+						}
+					}
+				}
+			}
+		} //else {
+			// Sometimes due to recalculated collisions between objects we might endup outside boundries.
+			//  This call happends the very next frame. This ain't great but with such code we can quickfix 
+			//  our position to get back into the boundry.
+			object.transform.position.x = Math::Clamp(object.transform.position.x, boundry.x + radius, boundry.w - radius);
+			object.transform.position.y = Math::Clamp(object.transform.position.y, boundry.y + radius, boundry.h - radius);
+		
+	}
+
+	void CollideSquare(
+		const float& deltaTime,
+		const size& objectsCount,
+		/* out */ Object::Object* objects,
+		const size& current,
+		/* out */ vector<Vector::Vector2<float>>& calculatedPositions
+	) {
+		auto& object = objects[current];
+		auto& calculatedPosition = calculatedPositions[current];
+		const auto& type = (ObjectType::Square*)(object.type.representation);
+		const auto& area = type->size;
+
+		// COLLISION [ IN BOUNDRY CHECKS ]
+		const Rectangle boundry { 0, 0, 920, 360 }; // It will be outside later
+		if (calculatedPosition.x < boundry.x + area.x/2 || calculatedPosition.x > boundry.w - area.x/2)		// If we're outside X boundry.
+			object.moveable.velocity.x *= -1;
+
+		if (calculatedPosition.y < boundry.y + area.y/2 || calculatedPosition.y > boundry.h - area.y/2)		// If we're outside Y boundry.
+			object.moveable.velocity.y *= -1;
+
+		if (calculatedPosition.x > boundry.x + area.x/2 && calculatedPosition.y > boundry.y + area.y/2 &&	// If we're in boundry.
+			calculatedPosition.x < boundry.w - area.x/2 && calculatedPosition.y < boundry.h - area.y/2
+		) {
+			// COLLISION [ WITH OTHER CHECKS ]
+			for (size i = 0; i < objectsCount; i++) {
+				auto& other = objects[i];
+				const auto& otherType = (ObjectType::Circle*)(other.type.representation);
+
+				if (object.collision.id != other.collision.id &&
+					object.type.type == other.type.type
+				) {
+					auto& otherCalculatedPosition = calculatedPositions[i];
+					const auto& otherArea = type->size; // object.collision.boundry instead should be used...
+
+					const Vector::Vector2<float>& center1 = calculatedPosition;
+					const Vector::Vector2<float>& center2 = otherCalculatedPosition;
+					const double lengthBetween = Vector::LengthBetween(center1, center2);
+					const float left = (object.collision.boundry.w + center1.x) - (other.collision.boundry.x + center2.x);
+					const float right = (other.collision.boundry.w + center2.x) - (object.collision.boundry.x + center1.x);
+					const float top = (object.collision.boundry.h + center1.y) - (other.collision.boundry.y + center2.y);
+					const float bottom = (other.collision.boundry.h + center2.y) - (object.collision.boundry.y + center1.y);
+					
+					// Wektro separacji w tej formie to opdowiednio wartoœci: left, right, top, bottom.
+					Vector::Vector2<float> separation;
+					left < right ? separation.x = -left : separation.x = right;
+					top < bottom ? separation.y = -top : separation.y = bottom;
+					abs(separation.x) < abs(separation.y) ? separation.y = 0 : separation.x = 0;
+
+					// Collision Detected
+					if (left > 0 && right > 0 && top > 0 && bottom > 0) {
+						SDL_Log("1: %f, %f, %f, %f", left, right, top, bottom);
+						SDL_Log("2: %f, %f", separation.x, separation.y);
+
+						if (isSeperationOn) {
+							//object.transform.position = Vector::Addition(object.transform.position, { separation.x * (float)(radius2 - lengthBetween * 0.5f), separation.y * (float)(radius2 - lengthBetween * 0.5f) });
+							//other.transform.position = Vector::Subtract(other.transform.position, { separation.x * (float)(radius1 - lengthBetween * 0.5f), separation.y * (float)(radius1 - lengthBetween * 0.5f) });
+							//calculatedPosition = Vector::Addition(
+							//	object.transform.position, {
+							//		separation.x * (float)(otherArea.x - lengthBetween * 0.5f),
+							//		separation.y * (float)(otherArea.y - lengthBetween * 0.5f)
+							//	}
+							//);
+							//
+							//otherCalculatedPosition = Vector::Subtract(
+							//	other.transform.position, {
+							//		separation.x * (float)(area.x - lengthBetween * 0.5f),
+							//		separation.y * (float)(area.y - lengthBetween * 0.5f)
+							//	}
+							//);
+						}
+
+						//if (isReflectionOn) {
+						//	//SDL_Log("Object: %d, Other: %d", (int32)object.collision.id, (int32)other.collision.id);
+						//
+						//	const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveable.velocity, separation) * 2.0f);
+						//	object.moveable.velocity = Vector::Subtract(object.moveable.velocity, offset1);
+						//
+						//	separation = Vector::Vector2<float> { separation.x * -1.0f, separation.y * -1.0f };
+						//
+						//	const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveable.velocity, separation) * 2.0f);
+						//	other.moveable.velocity = Vector::Subtract(other.moveable.velocity, offset2);
+						//
+						//	//SDL_Log("Object velocity: %f %f", object.moveable.velocity.x, object.moveable.velocity.y);
+						//	//SDL_Log("Other velocity: %f %f", other.moveable.velocity.x, other.moveable.velocity.y);
+						//}
+					}
+				}
+			}
+		} //else {
+			// Sometimes due to recalculated collisions between objects we might endup outside boundries.
+			//  This call happends the very next frame. This ain't great but with such code we can quickfix 
+			//  our position to get back into the boundry.
+			object.transform.position.x = Math::Clamp(object.transform.position.x, boundry.x + area.x, boundry.w - area.x);
+			object.transform.position.y = Math::Clamp(object.transform.position.y, boundry.y + area.x, boundry.h - area.x);
+		//}
+	}
+
+	void LogicUpdate(
+		const float& deltaTime, 
+		const size& objectsCount, 
+		Object::Object* objects
+	) {
 		vector<Vector::Vector2<float>> calculatedPositions;
-		//vector<Vector::Vector2<float>> finalPositions;
 
 		// Calculate their new position.
 		for (size i = 0; i < objectsCount; i++) {
@@ -75,114 +279,41 @@ namespace Game {
 			calculatedPositions.push_back(temp);
 		}
 
-		// We do that so we can operate on calculatedPositions without interupting with values
-		//  calculated after collision check.
-		//finalPositions = calculatedPositions;
+		// Collision Detection based on those new positions.
+		if constexpr (isCollisionOn) {
+			for (size i = 0; i < objectsCount; i++) {
+				auto& object = objects[i];
 
-		// Collision Detection
+				// Check object type to obtain it's world representation. eg. radius / size. 
+				switch (object.type.type) {
+				
+					case ObjectType::Type::Circle: {
+						const auto& type = (ObjectType::Circle*)(object.type.representation);
+						const auto& radius = type->radius;
+				
+						// Collision Detection for circle like objects.
+						CollideCircle(deltaTime, objectsCount, objects, i, calculatedPositions);
+						break;
+					}
+				
+					case ObjectType::Type::Square: {
+						const auto& type = (ObjectType::Square*)(object.type.representation);
+						const auto& size = type->size;
+				
+						// Collision Detection for square like objects.
+						CollideSquare(deltaTime, objectsCount, objects, i, calculatedPositions);
+
+						break;
+					}
+				}
+			}
+		}
+
+		// Update their positions.
 		for (size i = 0; i < objectsCount; i++) {
 			auto& object = objects[i];
-			const float radius = 30;
-
-			if (calculatedPositions[i].x < boundry.x + radius || calculatedPositions[i].x > boundry.w - radius)		// If we're outside X boundry.
-				object.moveable.velocity.x *= -1;
-
-			if (calculatedPositions[i].y < boundry.y + radius || calculatedPositions[i].y > boundry.h - radius)		// If we're outside Y boundry.
-				object.moveable.velocity.y *= -1;
-
-			if (calculatedPositions[i].x > boundry.x + radius && calculatedPositions[i].y > boundry.y + radius &&	// If we're in boundry.
-				calculatedPositions[i].x < boundry.w - radius && calculatedPositions[i].y < boundry.h - radius) {
-
-				// COLLISION CHECK & LOGIC
-				if constexpr (isCollisionOn) {
-
-					// When collision is detected i do the same as with boundry.
-
-					// without seperation they shouldnt collide 
-					// without bouncing they should slide
-
-					// 1. TRY Enumerate through all other objects.
-					for (size j = 0; j < objectsCount; j++) {
-						auto& other = objects[j];
-						if (object.collision.id != other.collision.id) {
-
-							{ // Circle Collision
-								const Vector::Vector2<float> center1 = calculatedPositions[i];
-								const Vector::Vector2<float> center2 = calculatedPositions[j];
-								//const Vector::Vector2<float> collisionPoint { center1 - center2 };
-								const double lengthBetween = Vector::LengthBetween(center1, center2);
-								const double radius1 = radius;
-								const double radius2 = radius;
-								Vector::Vector2<float> separation { // simple normalization
-									(center1.x - center2.x) / (float)lengthBetween, // *(radius1 + radius2 - lengthBetween),
-									(center1.y - center2.y) / (float)lengthBetween  // *(radius1 + radius2 - lengthBetween)
-								};
-								
-								if (lengthBetween < radius1 + radius2) {
-									//SDL_Log("Separation: %f, %f", separation.x, separation.y);
-									//SDL_Log("Velocity1: %f, %f", object.moveable.velocity.x, object.moveable.velocity.y);
-									//SDL_Log("Velocity2: %f, %f", other.moveable.velocity.x, other.moveable.velocity.y);
-
-									// Separate balls
-									if (isSeperationOn) {
-										//finalPositions[i] = Vector::Addition(calculatedPositions[i], { separation.x * (float)(radius2 - lengthBetween * 0.5f), separation.y * (float)(radius2 - lengthBetween * 0.5f) });
-										//finalPositions[j] = Vector::Subtract(calculatedPositions[j], { separation.x * (float)(radius1 - lengthBetween * 0.5f), separation.y * (float)(radius1 - lengthBetween * 0.5f) });
-										object.transform.position = Vector::Addition(object.transform.position, { separation.x * (float)(radius2 - lengthBetween * 0.5f), separation.y * (float)(radius2 - lengthBetween * 0.5f) });
-										other.transform.position = Vector::Subtract(other.transform.position, { separation.x * (float)(radius1 - lengthBetween * 0.5f), separation.y * (float)(radius1 - lengthBetween * 0.5f) });
-									}
-
-									// Reflect balls
-									if (isReflectionOn) {
-
-										//velocity = velocity - collisionPoint * Vector2::DotProduct(velocity, collisionPoint) * 2.0;
-										//collisionPoint *= -1.0f;
-										//b.velocity = b.velocity - collisionPoint * Vector2::DotProduct(b.velocity, collisionPoint) * 2.0;
-
-										const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveable.velocity, separation) * 2.0f);
-										object.moveable.velocity = Vector::Subtract(object.moveable.velocity, offset1);
-
-										separation = Vector::Vector2<float>{ separation.x * -1.0f, separation.y * -1.0f };
-
-										const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveable.velocity, separation) * 2.0f);
-										other.moveable.velocity = Vector::Subtract(other.moveable.velocity, offset2);
-									}
-
-									//object.moveable.velocity.x *= -1;
-									//object.moveable.velocity.y *= -1;
-									calculatedPositions[i] = object.calculateMove(object.transform, object.moveable, deltaTime);
-								}
-							}
-
-							//{ // Rectangular Collision
-							//	const float left = (object.collision.boundry.w + positions[i].x) - (other.collision.boundry.x + positions[j].x);
-							//	const float right = (other.collision.boundry.w + positions[j].x) - (object.collision.boundry.x + positions[i].x);
-							//	const float top = (object.collision.boundry.h + positions[i].y) - (other.collision.boundry.y + positions[j].y);
-							//	const float bottom = (other.collision.boundry.h + positions[j].y) - (object.collision.boundry.y + positions[i].y);
-							//	// Wektro separacji w tej formie to opdowiednio wartoœci: left, right, top, bottom.
-							//	if (left > 0 && right > 0 && top > 0 && bottom > 0) {
-							//		SDL_Log("1: %f, %f, %f, %f", left, right, top, bottom);
-							//	}
-							//}
-							
-						}
-					}
-
-				}
-
-				//object.transform.position.x = finalPositions[i].x;
-				//object.transform.position.y = finalPositions[i].y;
-			} else { // We're outside! hit the boundry
-				// if we somehow end up here we should make it back with some logic to the boundry
-				// Structure overall could be better theres no need for some objects to fall through this if statement..
-				SDL_Log("We're HERE !!!!");
-				object.transform.position.x = Math::Clamp(object.transform.position.x, boundry.x + radius, boundry.w - radius);
-				object.transform.position.y = Math::Clamp(object.transform.position.y, boundry.y + radius, boundry.h - radius);
-				return;
-			}
-
 			object.transform.position.x = calculatedPositions[i].x;
 			object.transform.position.y = calculatedPositions[i].y;
-			
 		}
 
 	}
@@ -190,11 +321,25 @@ namespace Game {
 	void RenderUpdate(const Renderer& renderer, const Color::Color& backgroundColor, const size& objectsCount, Object::Object* objects) {
 		Draw::Background(renderer, backgroundColor);
 
-		const float radius(30);
 
 		for (size i = 0; i < objectsCount; i++) {
 			const auto& object = objects[i];
-			object.draw(renderer, object.transform.position, radius, object.color);
+
+			switch (object.type.type) {
+				case ObjectType::Type::Circle: {
+					const auto& type = (ObjectType::Circle*)(object.type.representation);
+					auto& radius = type->radius;
+					object.draw(renderer, object.transform.position, &radius, object.color);
+					break;
+				}
+				case ObjectType::Type::Square: {
+					const auto& type = (ObjectType::Square*)(object.type.representation);
+					auto& size = type->size;
+					object.draw(renderer, object.transform.position, &size, object.color);
+					break;
+				}
+			}
+			
 		}
 
 		SDL_RenderPresent(renderer);
@@ -210,7 +355,6 @@ namespace Game {
 
 		while (Callback::HandleEvents() != Callback::Events::Quit) {
 			//SDL_Log("Milliseconds: %f", Time::GetElapsedTime());
-			 
 			LogicUpdate(Time::GetElapsedTime(), objectsCount, objects);
 			RenderUpdate(renderer, backgroundColor, objectsCount, objects);
 		}

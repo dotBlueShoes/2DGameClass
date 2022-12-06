@@ -23,6 +23,6 @@ namespace Transform {
 		Vector::Vector2<float> scale;
 	};
 
-	const Transform zero = { Position::zero, Rotation::zero, Scale::one };
+	const Transform zero = { Position::zero, Rotation::zero, Scale::one,  };
 
 }
