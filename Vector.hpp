@@ -30,12 +30,14 @@ namespace Vector {
 		return { vector.x * scalar, vector.y * scalar };
 	}
 
-	double DotProduct(const Vector2<float>& first, const Vector2<float>& other) {
+	float DotProduct(const Vector2<float>& first, const Vector2<float>& other) {
 		return (first.x * other.x) + (first.y * other.y);
 	}
 
 	double LengthBetween(const Vector2<float>& origin, const Vector2<float>& destin) {
-		return sqrt(pow(destin.x - origin.x, 2) + pow(destin.y - origin.y, 2));
+		const float resultX = destin.x - origin.x;
+		const float resultY = destin.y - origin.y;
+		return sqrt(pow(resultX, 2) + pow(resultY, 2));
 	}
 
 }

@@ -17,7 +17,7 @@ namespace Draw {
 
 	block Square(const Renderer& renderer, const Vector::Vector2<float>& position, void* nArea, const Color::Color& color) {
 		const auto& area = *(Vector::Vector2<float>*)(nArea);
-		const Rectangle fillRect { ceil(position.x - (area.x / 2)), ceil(position.y - (area.y / 2)), area.x, area.y };
+		const Rectangle fillRect { (int)ceil(position.x - (int)(area.x / 2)), (int)ceil(position.y - (int)(area.y / 2)), (int)area.x, (int)area.y };
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		SDL_RenderFillRect(renderer, &fillRect);
 	};

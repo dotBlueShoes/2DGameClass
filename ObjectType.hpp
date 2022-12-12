@@ -3,11 +3,6 @@
 
 namespace ObjectType {
 
-	enum class Type : uint64 {
-		Square = 0,
-		Circle = 1
-	};
-
 	struct Square {
 		Vector::Vector2<float> size;
 	};
@@ -17,8 +12,7 @@ namespace ObjectType {
 	};
 
 	struct ObjectType {
-		Type type;
-		void* representation;
+		any representation;
 	};
 	
 }

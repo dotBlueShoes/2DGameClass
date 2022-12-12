@@ -28,9 +28,12 @@ using int64 = int64_t;
 using uint8 = uint8_t;
 using int8 = int8_t;
 
+using any = void*;
+
 using MainWindow = SDL_Window*;
 using Renderer = SDL_Renderer*;
 using Rectangle = SDL_Rect;
+
 
 #ifdef NDEBUG
 const bool debugLayer = false;
