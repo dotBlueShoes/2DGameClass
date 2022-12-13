@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector.hpp"
 
-namespace ObjectType {
+namespace Surface {
 
 	struct Square {
 		Vector::Vector2<float> size;
@@ -11,8 +11,8 @@ namespace ObjectType {
 		float radius;
 	};
 
-	struct ObjectType {
-		any representation;
+	struct Surface {
+		any type;
 	};
 	
 }

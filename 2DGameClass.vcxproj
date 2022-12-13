@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -145,16 +145,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Movable.hpp" />
+    <ClInclude Include="Entities\EntityPlayerCircle.hpp" />
+    <ClInclude Include="Entities\EntityPlayerSquare.hpp" />
+    <ClInclude Include="Components\Movable.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="Draw.hpp" />
+    <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="Systems\Move.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="Framework.hpp" />
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Object.hpp" />
-    <ClInclude Include="Transform.hpp" />
+    <ClInclude Include="Components\Transform.hpp" />
     <ClInclude Include="Vector.hpp" />
   </ItemGroup>
   <ItemGroup>

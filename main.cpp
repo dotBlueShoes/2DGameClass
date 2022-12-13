@@ -1,7 +1,11 @@
 #include "Framework.hpp"
 #include "Window.hpp"
-#include "Object.hpp"
 #include "Game.hpp"
+
+#include "Entity.hpp"
+#include "Entities/EntityPlayerCircle.hpp"
+#include "Entities/EntityPlayerSquare.hpp"
+#include "Object.hpp"
 
 int SDL_main(int argc, char** argv) {
 
@@ -16,17 +20,25 @@ int SDL_main(int argc, char** argv) {
 	const Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
 	const float radius(30.0f);
 
-	ObjectType::Circle circleType1 { 30 };
-	ObjectType::Square squareType1 { 60, 60 };
+	Surface::Circle circleSurface1 { 30 };
+	Surface::Square squareSurface1 { 60, 60 };
+
+	const Entity::PlayerCircle playerCircle { Transform::zero, circleSurface1, { 30 }, { Moveable::GetRandomAngleForce(80.0f) } };
+	const Entity::PlayerSquare playerSquare { Transform::zero, squareSurface1, { 60, 60 }, { Moveable::GetRandomAngleForce(80.0f) } };
+
+	Entity::EntitiesBuffor buffor(Entity::CreateEntitiesBuffor(100));
+	Entity::CreateEntitiesCPY<Entity::PlayerCircle>(buffor, playerCircle, 1);
+	Entity::CreateEntitiesCPY<Entity::PlayerSquare>(buffor, playerSquare, 1, 1);
+	Entity::DeleteEntitiesBuffor(buffor, 100);
 
 	// Objects
 	const Object::Object square1 { 
 		Object::Type::Square + 0,
 		{ { 100, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &squareType1 },
+		{ &squareSurface1 },
 		Color::red, 
 		Draw::Square, 
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius }}
 	};
@@ -34,10 +46,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object square2 {
 		Object::Type::Square + 1,
 		{ { 200, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &squareType1 },
+		{ &squareSurface1 },
 		Color::green,
 		Draw::Square,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius }}
 	};
@@ -45,10 +57,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle1 {
 		Object::Type::Circle + 0,
 		{ { 300, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::blue,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -56,10 +68,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle2 {
 		Object::Type::Circle + 1,
 		{ { 400, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::purple,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius }}
 	};
@@ -67,10 +79,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle3 {
 		Object::Type::Circle + 2,
 		{ { 500, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::pink,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -78,10 +90,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle4 {
 		Object::Type::Circle + 3,
 		{ { 600, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::lightBlue,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -89,10 +101,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle5 {
 		Object::Type::Circle + 4,
 		{ { 700, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::cyan,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -100,10 +112,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle6 {
 		Object::Type::Circle + 5,
 		{ { 800, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::lightGreen,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -111,10 +123,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle7 {
 		Object::Type::Circle + 6,
 		{ { 100, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::darkBlue,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -122,10 +134,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle8 {
 		Object::Type::Circle + 7,
 		{ { 200, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::darkGreen,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -133,10 +145,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle9 {
 		Object::Type::Circle + 8,
 		{ { 300, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::brown,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -144,10 +156,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle10 {
 		Object::Type::Circle + 9,
 		{ { 400, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::orange,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -155,10 +167,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle11 {
 		Object::Type::Circle + 10,
 		{ { 500, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::magenta,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -166,10 +178,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle12 {
 		Object::Type::Circle + 11,
 		{ { 600, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::white,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -177,10 +189,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle13 {
 		Object::Type::Circle + 12,
 		{ { 700, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::lightGray,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};
@@ -188,10 +200,10 @@ int SDL_main(int argc, char** argv) {
 	const Object::Object circle14 {
 		Object::Type::Circle + 13,
 		{ { 800, 300 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &circleType1 },
+		{ &circleSurface1 },
 		Color::gray,
 		Draw::Circle,
-		{ Moveable::GetRandomAngleForce(80.0f), { 1, 1 } },
+		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
 		{ { -radius, -radius, radius, radius } }
 	};

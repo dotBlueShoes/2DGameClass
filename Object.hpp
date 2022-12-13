@@ -1,16 +1,18 @@
 #pragma once
 #include "Framework.hpp"
-#include "Transform.hpp"
-#include "Movable.hpp"
+#include "Components/Transform.hpp"
+#include "Components/Movable.hpp"
 #include "Color.hpp"
-#include "Collision.hpp"
-#include "ObjectType.hpp"
+#include "Components/Collision.hpp"
+#include "Components/Surface.hpp"
 
 namespace Object {	
 
-	using DrawCallback = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
-	using CalculateMoveCallback = const Vector::Vector2<float> (*)(const Transform::Transform& transform, const Moveable::Moveable& moveable, const float& deltaTime);
-
+	namespace Callback {
+		using Draw = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
+		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::MoveData& moveData, const float& deltaTime);
+	}
+	
 	const uint64 typeRange = 100000;
 	enum Type : uint64 {
 		Square = 0,
@@ -28,11 +30,11 @@ namespace Object {
 	struct Object {
 		uint64 identifier;
 		Transform::Transform transform;
-		ObjectType::ObjectType type;
+		Surface::Surface surface;
 		Color::Color color;
-		DrawCallback draw;
-		Moveable::Moveable moveable;
-		CalculateMoveCallback calculateMove;
+		Callback::Draw draw;
+		Moveable::MoveData moveData;
+		Callback::CalculateMove calculateMove;
 		Collision::SquareCollision collision;
 	};
 

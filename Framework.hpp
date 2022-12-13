@@ -16,7 +16,7 @@
 //#include <fstream>
 
 #define block inline void
-#define getter constexpr auto
+#define getter [[nodiscard]] constexpr auto
 
 using std::array;
 using std::vector;

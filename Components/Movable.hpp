@@ -3,9 +3,10 @@
 
 namespace Moveable {
 
-	struct Moveable {
+	const Vector::Vector2<float> zero { 0, 0 };
+
+	struct MoveData {
 		Vector::Vector2<float> velocity;
-		Vector::Vector2<float> direction;
 	};
 
 	Vector::Vector2<float> GetRandomAngleForce(const float& force) {
@@ -13,7 +14,11 @@ namespace Moveable {
 		return { (float)cos(angle) * force, (float)sin(angle) * force };
 	}
 
-	constexpr const Vector::Vector2<float> CalculateMove(const Transform::Transform& transform, const Moveable& moveable, const float& deltaTime) {
+	constexpr const Vector::Vector2<float> CalculateMove(
+		const Transform::Transform& transform,
+		const MoveData& moveable,
+		const float& deltaTime
+	) {
 		return { transform.position.x + moveable.velocity.x * deltaTime,
 			transform.position.y + moveable.velocity.y * deltaTime };
 	}

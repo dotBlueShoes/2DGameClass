@@ -3,6 +3,7 @@
 #include "Window.hpp"
 #include "Time.hpp"
 
+#include "Entity.hpp"
 #include "Object.hpp"
 #include "Draw.hpp"
 #include "Math.hpp"
@@ -18,17 +19,17 @@ namespace Game {
 	) {
 		auto& object = objects[current];
 		auto& calculatedPosition = calculatedPositions[current];
-		const auto& type = (ObjectType::Circle*)(object.type.representation);
+		const auto& type = (Surface::Circle*)(object.surface.type);
 		const auto& radius = type->radius;
 
 
 		// COLLISION [ IN BOUNDRY CHECKS ]
 		const Rectangle boundry{ 0, 0, 920, 360 }; // It will be outside later
 		if (calculatedPosition.x < boundry.x + radius || calculatedPosition.x > boundry.w - radius)		// If we're outside X boundry.
-			object.moveable.velocity.x *= -1;
+			object.moveData.velocity.x *= -1;
 
 		if (calculatedPosition.y < boundry.y + radius || calculatedPosition.y > boundry.h - radius)		// If we're outside Y boundry.
-			object.moveable.velocity.y *= -1;
+			object.moveData.velocity.y *= -1;
 
 		if (calculatedPosition.x > boundry.x + radius && calculatedPosition.y > boundry.y + radius &&	// If we're in boundry.
 			calculatedPosition.x < boundry.w - radius && calculatedPosition.y < boundry.h - radius
@@ -37,7 +38,7 @@ namespace Game {
 			// COLLISION [ WITH OTHER CHECKS ]
 			for (size i = 0; i < objectsCount; i++) {
 				auto& other = objects[i];
-				const auto& otherType = (ObjectType::Circle*)(other.type.representation);
+				const auto& otherType = (Surface::Circle*)(other.surface.type);
 
 				if (object.identifier != other.identifier) {
 
@@ -74,11 +75,11 @@ namespace Game {
 							}
 
 							if (Collision::isReflectionOn) {
-								const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveable.velocity, separation) * 2.0f);
-								object.moveable.velocity = Vector::Subtract(object.moveable.velocity, offset1);
+								const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveData.velocity, separation) * 2.0f);
+								object.moveData.velocity = Vector::Subtract(object.moveData.velocity, offset1);
 								separation = Vector::Vector2<float>{ separation.x * -1.0f, separation.y * -1.0f };
-								const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveable.velocity, separation) * 2.0f);
-								other.moveable.velocity = Vector::Subtract(other.moveable.velocity, offset2);
+								const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveData.velocity, separation) * 2.0f);
+								other.moveData.velocity = Vector::Subtract(other.moveData.velocity, offset2);
 							}
 						}
 					} 
@@ -99,16 +100,16 @@ namespace Game {
 	) {
 		auto& object = objects[current];
 		auto& calculatedPosition = calculatedPositions[current];
-		const auto& type = (ObjectType::Square*)(object.type.representation);
+		const auto& type = (Surface::Square*)(object.surface.type);
 		const auto& area = type->size;
 
 		// COLLISION [ IN BOUNDRY CHECKS ]
 		const Rectangle boundry{ 0, 0, 920, 360 }; // It will be outside later
 		if (calculatedPosition.x < boundry.x + area.x / 2 || calculatedPosition.x > boundry.w - area.x / 2)		// If we're outside X boundry.
-			object.moveable.velocity.x *= -1;
+			object.moveData.velocity.x *= -1;
 
 		if (calculatedPosition.y < boundry.y + area.y / 2 || calculatedPosition.y > boundry.h - area.y / 2)		// If we're outside Y boundry.
-			object.moveable.velocity.y *= -1;
+			object.moveData.velocity.y *= -1;
 
 		if (calculatedPosition.x > boundry.x + area.x / 2 && calculatedPosition.y > boundry.y + area.y / 2 &&	// If we're in boundry.
 			calculatedPosition.x < boundry.w - area.x / 2 && calculatedPosition.y < boundry.h - area.y / 2
@@ -116,7 +117,7 @@ namespace Game {
 			// COLLISION [ WITH OTHER CHECKS ]
 			for (size i = 0; i < objectsCount; i++) {
 				auto& other = objects[i];
-				const auto& otherType = (ObjectType::Circle*)(other.type.representation);
+				const auto& otherType = (Surface::Circle*)(other.surface.type);
 
 				if (object.identifier != other.identifier) {
 					if (Object::IsType(object.identifier, other.identifier, Object::Type::Square)) {
@@ -163,22 +164,22 @@ namespace Game {
 							// Mówimy obiektowi ¿eby porusza³ siê teraz w innym torze.
 							if (Collision::isReflectionOn) {
 								if (separation.x == 0) {
-									object.moveable.velocity.x *= 1;
-									other.moveable.velocity.x *= 1;
-									object.moveable.velocity.y *= -1;
-									other.moveable.velocity.y *= -1;
+									object.moveData.velocity.x *= 1;
+									other.moveData.velocity.x *= 1;
+									object.moveData.velocity.y *= -1;
+									other.moveData.velocity.y *= -1;
 								} else {
-									object.moveable.velocity.x *= -1;
-									other.moveable.velocity.x *= -1;
-									object.moveable.velocity.y *= 1;
-									other.moveable.velocity.y *= 1;
+									object.moveData.velocity.x *= -1;
+									other.moveData.velocity.x *= -1;
+									object.moveData.velocity.y *= 1;
+									other.moveData.velocity.y *= 1;
 								}
 							}
 						}
 					} else if (Object::IsType(object.identifier, Object::Type::Square) &&
 						Object::IsType(other.identifier, Object::Type::Circle)
 					) {
-						const auto& otherType = (ObjectType::Circle*)(object.type.representation);
+						const auto& otherType = (Surface::Circle*)(object.surface.type);
 						const auto& otherRadius = otherType->radius; // object.collision.boundry instead should be used...
 						auto& otherCalculatedPosition = calculatedPositions[i];
 						SDL_Log("HERE");
@@ -282,7 +283,7 @@ namespace Game {
 		// Calculate their new position.
 		for (size i = 0; i < objectsCount; i++) {
 			auto& object = objects[i];
-			const Vector::Vector2 temp = object.calculateMove(object.transform, object.moveable, deltaTime);
+			const Vector::Vector2 temp = object.calculateMove(object.transform, object.moveData, deltaTime);
 			calculatedPositions.push_back(temp);
 		}
 
@@ -292,11 +293,11 @@ namespace Game {
 				auto& object = objects[i];
 
 				if (Object::IsType(object.identifier, Object::Type::Circle)) {
-					const auto& type = (ObjectType::Circle*)(object.type.representation);
+					const auto& type = (Surface::Circle*)(object.surface.type);
 					const auto& radius = type->radius;
 					CollideCircle(deltaTime, objectsCount, objects, i, calculatedPositions);
 				} else if (Object::IsType(object.identifier, Object::Type::Square)) {
-					const auto& type = (ObjectType::Square*)(object.type.representation);
+					const auto& type = (Surface::Square*)(object.surface.type);
 					const auto& size = type->size;
 					CollideSquare(deltaTime, objectsCount, objects, i, calculatedPositions);
 				} else {
@@ -321,11 +322,11 @@ namespace Game {
 			const auto& object = objects[i];
 
 			if (Object::IsType(object.identifier, Object::Type::Circle)) {
-				const auto& type = (ObjectType::Circle*)(object.type.representation);
+				const auto& type = (Surface::Circle*)(object.surface.type);
 				auto& radius = type->radius;
 				object.draw(renderer, object.transform.position, &radius, object.color);
 			} else if (Object::IsType(object.identifier, Object::Type::Square)) {
-				const auto& type = (ObjectType::Square*)(object.type.representation);
+				const auto& type = (Surface::Square*)(object.surface.type);
 				auto& size = type->size;
 				object.draw(renderer, object.transform.position, &size, object.color);
 			} else {

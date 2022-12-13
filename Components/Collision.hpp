@@ -1,7 +1,9 @@
 #pragma once
-#include "Framework.hpp"
+#include "../Framework.hpp"
 
 namespace Collision {
+
+	// ! Should have identifier as a field.
 
 	const bool isCollisionOn(true);
 	bool isSeperationOn(true);
