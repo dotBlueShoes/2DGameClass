@@ -8,7 +8,7 @@ namespace Window {
 	struct WindowStruct {
 		Vector::Vector2<uint32> viewport;
 		const size& titleLength;
-		char* title;
+		const char* title;
 		Color::Color backgroundColor;
 	};
 

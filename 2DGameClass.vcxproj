@@ -152,6 +152,8 @@
     <ClInclude Include="Color.hpp" />
     <ClInclude Include="Draw.hpp" />
     <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="FunctionStack.hpp" />
+    <ClInclude Include="Log.hpp" />
     <ClInclude Include="Systems\Move.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Window.hpp" />

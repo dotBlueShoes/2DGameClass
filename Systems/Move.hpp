@@ -12,7 +12,7 @@ namespace Move {
 	//  because components can be only added at creation.
 	//  therefore thier position in buffors in known.
 
-	using Range = uint64;
+	using Range = size;
 	using Ranges = Range*;
 
 	struct System {
@@ -32,7 +32,7 @@ namespace Move {
 	// }
 
 	//template <class T>
-	getter CalculateMove(
+	getter CalculateMove (
 		System& system,
 		const float& deltaTime
 	) {
@@ -41,6 +41,7 @@ namespace Move {
 		for (size i = 0; i < system.rangesLength; i++) {
 			for (size j = 0; j < system.ranges[i]; j++) {
 				auto& entity = /*(T)*/system.entities[j];
+				
 				//entity.transform.psoition.x + entity.moveData.velocity.x * deltaTime,
 				//	entity.transfrom.position.y + entity.moveData.velocity.x * deltaTime;
 			}

@@ -338,6 +338,10 @@ namespace Game {
 		SDL_RenderPresent(renderer);
 	}
 
+	block MainLoop(const Renderer& renderer, const Color::Color& backgroundColor, Entity::EntitiesBuffor) {
+
+	}
+
 	block MainLoop(const Renderer& renderer, const Color::Color& backgroundColor, const size& objectsCount, Object::Object* objects) {
 		Time::Start();
 
