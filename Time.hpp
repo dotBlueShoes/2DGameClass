@@ -1,4 +1,7 @@
 #pragma once
+#include "Framework.hpp"
+#include "Log.hpp"
+
 #include <chrono>
 
 // namespace Time {
@@ -21,6 +24,7 @@ namespace Time {
 	void Start() {
 		startTime = SystemClock::now();
 		lastFrameTime = startTime;
+		DEBUG Log::Info("Clock Start");
 	}
 
 	float GetElapsedTime() {

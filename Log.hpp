@@ -13,6 +13,9 @@ namespace Log {
 	 * buffors, pointer / array declaration, const, compile-time code
 	*/
 
+	// whats C's ... mean ?
+	// https://publications.gbdirect.co.uk//c_book/chapter9/stdarg.html
+
 	template<typename... Args>
 	block Warning(const char* message, Args... args) {
 		SDL_LogWarn(0, message, args...);

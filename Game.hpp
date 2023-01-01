@@ -216,24 +216,26 @@ namespace Game {
 	namespace Callback {
 
 		enum class Events : int64 {
-			Nothing = 1,
-			Quit = 0
+			Nothing = 0,
+			Quit = 1
 		};
 
 		Events HandleEvents() {
 			SDL_Event event;
 			SDL_PollEvent(&event);
 			switch (event.type) {
-				case SDL_KEYDOWN: {
-					using namespace Collision;
+				case SDL_KEYDOWN:
 					switch (event.key.keysym.scancode) {
 						case SDL_SCANCODE_1:
-							isSeperationOn ? isSeperationOn = false : isSeperationOn = true;
+							DEBUG Collision::isSeperationOn ? Collision::isSeperationOn = false : Collision::isSeperationOn = true;
+							return Events::Nothing;
 						case SDL_SCANCODE_2:
-							isReflectionOn ? isReflectionOn = false : isReflectionOn = true;
+							DEBUG Collision::isReflectionOn ? Collision::isReflectionOn = false : Collision::isReflectionOn = true;
+							return Events::Nothing;
+						case SDL_SCANCODE_ESCAPE:
+							DEBUG Log::Info("Quit key pressed");
+							return Events::Quit;
 					}
-					return Events::Nothing;
-				}
 				case SDL_QUIT: return Events::Quit;
 				default: return Events::Nothing;
 			}
@@ -250,17 +252,17 @@ namespace Game {
 	) {
 		
 		// Initializes SDL Library with following components.
-		if constexpr (debugLayer) {
+		DEBUG {
 			if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
-				SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+				Log::Error("Unable to initialize SDL: %s", SDL_GetError());
 				assert(false);
 			}
 			if ((mainWindow = SDL_CreateWindow(window.title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, window.viewport.x, window.viewport.y, SDL_WINDOW_SHOWN)) == NULL) {
-				SDL_Log("Unable to create SDL window");
+				Log::Error("Unable to create SDL window");
 				assert(false);
 			}
 			if ((renderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags)) == NULL) {
-				SDL_Log("Unable to create SDL renderer");
+				Log::Error("Unable to create SDL renderer");
 				assert(false);
 			}
 		} else {
@@ -339,24 +341,60 @@ namespace Game {
 		SDL_RenderPresent(renderer);
 	}
 
-	block MainLoop(const Renderer& renderer, const Color::Color& backgroundColor, Entity::EntitiesBuffor) {
+	namespace Update {
 
-	}
+		block Logic() {
 
-	block MainLoop(const Renderer& renderer, const Color::Color& backgroundColor, const size& objectsCount, Object::Object* objects) {
-		Time::Start();
-
-		// FixedLogicUpdate(); ?
-		// - if(deltaTime)
-		// - some OS integration.... winapi ? yes
-		// https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
-
-		while (Callback::HandleEvents() != Callback::Events::Quit) {
-			//SDL_Log("Milliseconds: %f", Time::GetElapsedTime());
-			LogicUpdate(Time::GetElapsedTime(), objectsCount, objects);
-			RenderUpdate(renderer, backgroundColor, objectsCount, objects);
 		}
+
+		block Render(
+			const Renderer& renderer, 
+			const Color::Color& backgroundColor, 
+			/* chg */ size& entitiesLength,
+			/* chg */ Entity::EntitiesBuffor& entitiesBuffor
+		) {
+			Draw::Background(renderer, backgroundColor);
+
+			//for (size i = 0; i < entitiesLength; i++) {
+			//
+			//}
+
+			SDL_RenderPresent(renderer);
+		}
+
 	}
+
+	block MainLoop(
+		const Renderer& renderer, 
+		const Color::Color& backgroundColor, 
+		/* chg */ size& entitiesLength,
+		/* chg */ Entity::EntitiesBuffor& entitiesBuffor
+	) {
+		DEBUG Log::Info("Entering Main Loop");
+
+		Time::Start();
+		while (Callback::HandleEvents() != Callback::Events::Quit) {
+			Update::Logic();
+			Update::Render(renderer, backgroundColor, entitiesLength, entitiesBuffor);
+		}
+
+		DEBUG Log::Info("Out of Main Loop");
+	}
+
+	//block MainLoop(const Renderer& renderer, const Color::Color& backgroundColor, const size& objectsCount, Object::Object* objects) {
+	//	Time::Start();
+	//
+	//	// FixedLogicUpdate(); ?
+	//	// - if(deltaTime)
+	//	// - some OS integration.... winapi ? yes
+	//	// https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
+	//
+	//	while (Callback::HandleEvents() != Callback::Events::Quit) {
+	//		//SDL_Log("Milliseconds: %f", Time::GetElapsedTime());
+	//		LogicUpdate(Time::GetElapsedTime(), objectsCount, objects);
+	//		RenderUpdate(renderer, backgroundColor, objectsCount, objects);
+	//	}
+	//}
 
 	block Destroy(const MainWindow& mainWindow, const Renderer& mainRenderer) {
 		SDL_DestroyWindow(mainWindow);

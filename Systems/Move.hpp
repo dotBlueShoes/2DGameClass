@@ -1,26 +1,12 @@
 #pragma once
 #include "../Framework.hpp"
 #include "../Entity.hpp"
-#include "../Math.hpp"
+#include "../Math/Math.hpp"
 
 #include "../Components/Transform.hpp"
 #include "../Components/Movable.hpp"
 
 namespace Move {
-
-	// Ranges specify the entities in entity lists that have required components.
-	//  because components can be only added at creation.
-	//  therefore thier position in buffors in known.
-
-	using Range = size;
-	using Ranges = Range*;
-
-	struct System {
-		Entity::Entities entities;
-		const Ranges ranges;
-		const size rangesLength;
-		const size offset;
-	};
 
 	// constexpr const Vector::Vector2<float> CalculateMove(
 	// 	const Transform::Transform& transform, 
@@ -33,7 +19,7 @@ namespace Move {
 
 	//template <class T>
 	getter CalculateMove (
-		System& system,
+		Entity::System& system,
 		const float& deltaTime
 	) {
 		array<Vector::Vector2<float>, 10> output { 0 };
