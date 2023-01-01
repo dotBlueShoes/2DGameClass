@@ -1,5 +1,8 @@
 #pragma once
+#include "../Framework.hpp"
+#include "../Math/Math.hpp"
 #include "Transform.hpp"
+#include "Log.hpp"
 
 namespace Moveable {
 
@@ -11,7 +14,9 @@ namespace Moveable {
 
 	Vector::Vector2<float> GetRandomAngleForce(const float& force) {
 		const float angle = (float)(rand() * 3.14159 / 180);
-		return { (float)cos(angle) * force, (float)sin(angle) * force };
+		const Vector::Vector2<float> temp = { (float)cos(angle) * force, (float)sin(angle) * force };
+		DEBUG Log::Info("Move Vector: %f, %f", temp.x, temp.y);
+		return temp;
 	}
 
 	constexpr const Vector::Vector2<float> CalculateMove(

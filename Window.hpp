@@ -1,14 +1,13 @@
 #pragma once
 #include "Framework.hpp"
-#include "Vector.hpp"
-#include "Color.hpp"
+#include "Math/Math.hpp"
 
 namespace Window {
 
 	struct WindowStruct {
 		Vector::Vector2<uint32> viewport;
-		const size& titleLength;
-		const char* title;
+		size titleLength;
+		character* title;
 		Color::Color backgroundColor;
 	};
 

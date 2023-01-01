@@ -1,6 +1,6 @@
 #pragma once
 #include "../Framework.hpp"
-#include "../Vector.hpp"
+#include "../Math/Math.hpp"
 
 namespace Transform {
 

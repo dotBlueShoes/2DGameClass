@@ -10,6 +10,7 @@ namespace FunctionStack {
 		StackFunction* buffor;
 	};
 
+
 	template <size bufforLength>
 	getter Initialize() {
 		FunctionStack<bufforLength> stack;

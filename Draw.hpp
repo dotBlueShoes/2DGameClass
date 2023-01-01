@@ -1,7 +1,6 @@
 #pragma once
 #include "Framework.hpp"
-#include "Color.hpp"
-//#include "Math.hpp"
+#include "Math/Math.hpp"
 
 namespace Draw {
 

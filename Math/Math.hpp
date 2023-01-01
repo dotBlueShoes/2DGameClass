@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector.hpp"
+#include "Color.hpp"
 
 namespace Math {
 

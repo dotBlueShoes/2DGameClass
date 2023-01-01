@@ -2,7 +2,7 @@
 #include "Framework.hpp"
 #include "Components/Transform.hpp"
 #include "Components/Movable.hpp"
-#include "Color.hpp"
+#include "Math/Math.hpp"
 #include "Components/Collision.hpp"
 #include "Components/Surface.hpp"
 

@@ -1,5 +1,6 @@
 #pragma once
 #include "../Framework.hpp"
+#include "../Math/Math.hpp"
 
 namespace Collision {
 

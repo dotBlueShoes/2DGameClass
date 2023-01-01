@@ -5,7 +5,6 @@
 #include "Entity.hpp"
 #include "Entities/EntityPlayerCircle.hpp"
 #include "Entities/EntityPlayerSquare.hpp"
-#include "Object.hpp"
 
 int SDL_main(int argc, char** argv) {
 
@@ -13,11 +12,15 @@ int SDL_main(int argc, char** argv) {
 	// Do something with it...
 	// srand((unsigned int)time(NULL));
 
+	DEBUG Log::Info("Running in Debug Mode...");
+
 	// Window
-	const array<char, 25> windowTitle { "2DGry-242539-Polecenie-7" };
+	const array<character, 25> windowTitle { "2DGry-242539-Polecenie-7" };
+	const Vector::Vector2<uint32> windowViewport { 920 , 360 };
 	const Color::Color windowColor { 23, 23, 23, 255 };
-	const Vector::Vector2<uint32> windowViewport{ 920 , 360 };
-	const Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
+	
+	// Window Itself can have it's parameters changed.
+	Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
 
 	// Models
 	Surface::Circle circleSurface1 { 30 };
@@ -35,9 +38,9 @@ int SDL_main(int argc, char** argv) {
 	{ // Game
 		MainWindow mainWindow;
 		Renderer mainRenderer;
-		Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
-		Game::MainLoop(mainRenderer, windowStruct.backgroundColor, entitiesBuffor, entitiesBuffor.data());
-		Game::Destroy(mainWindow, mainRenderer);
+		//Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
+		//Game::MainLoop(mainRenderer, windowStruct.backgroundColor, entitiesBuffor, entitiesBuffor.data());
+		//Game::Destroy(mainWindow, mainRenderer);
 	}
 
 	// Clear Entity Buffor

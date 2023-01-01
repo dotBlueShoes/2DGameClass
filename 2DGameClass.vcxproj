@@ -149,11 +149,12 @@
     <ClInclude Include="Entities\EntityPlayerSquare.hpp" />
     <ClInclude Include="Components\Movable.hpp" />
     <ClInclude Include="Camera.hpp" />
-    <ClInclude Include="Color.hpp" />
+    <ClInclude Include="Math\Color.hpp" />
     <ClInclude Include="Draw.hpp" />
     <ClInclude Include="Entity.hpp" />
     <ClInclude Include="FunctionStack.hpp" />
     <ClInclude Include="Log.hpp" />
+    <ClInclude Include="Pointer.hpp" />
     <ClInclude Include="Systems\Move.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Window.hpp" />
@@ -161,7 +162,7 @@
     <ClInclude Include="Game.hpp" />
     <ClInclude Include="Object.hpp" />
     <ClInclude Include="Components\Transform.hpp" />
-    <ClInclude Include="Vector.hpp" />
+    <ClInclude Include="Math\Vector.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />

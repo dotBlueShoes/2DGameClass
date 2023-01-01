@@ -1,27 +1,44 @@
 #pragma once
 #include "Framework.hpp"
 
+#include <stdarg.h>
+
 namespace Log {
 
-	const size warrningLength = 9, errorLength = 7, infoLength = 6;
-	char* info, error, warning;
+	/*
+	 * It's not a good implementation. I decided to not touch it anymore simply because
+	 *  I was getting to much distracted by the use of const and cpp approach to them
+	 *  telling the compiler something which would literally be a line of code in assembly
+	 * 
+	 * buffors, pointer / array declaration, const, compile-time code
+	*/
 
-	template <size sharedBufforSize>
-	block Initialize() {
-		//info = (char*) malloc(sharedBufforSize * sizeof char); // uninitialized data. if i assign it with = i willchange pointer reference...
-		//char* test = strdup("testingonly");
-		//delete test;
-
-		//warning = new char[sharedBufforSize] { "Warning: " "\0" };
-		//error = new char[sharedBufforSize] { "Error: " "\0" };
-		//info = new char[sharedBufforSize] { "Info: " "\0" };
+	template<typename... Args>
+	block Warning(const char* message, Args... args) {
+		SDL_LogWarn(0, message, args...);
 	}
 
-	block Info(const char* message) {
-
-		
-		info[infoLength];
-
-		//SDL_Log("Info: " + message);
+	template<typename... Args>
+	block Error(const char* message, Args... args) {
+		SDL_LogError(0, message, args...);
 	}
+
+	template<typename... Args>
+	block Info(const char* message, Args... args) {
+		SDL_LogInfo(0, message, args...);
+	}
+
+
+	//block Warning(const char* message, const char* rest...) {
+	//	SDL_LogWarn(0, message);
+	//}
+	//
+	//block Error(const char* message, const char* rest...) {
+	//	SDL_LogError(0, message);
+	//}
+	//
+	//block Info(const char* message, const char* rest...) {
+	//	SDL_LogInfo(0, message);
+	//}
+
 }

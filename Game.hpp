@@ -6,7 +6,8 @@
 #include "Entity.hpp"
 #include "Object.hpp"
 #include "Draw.hpp"
-#include "Math.hpp"
+#include "Log.hpp"
+#include "Math/Math.hpp"
 
 namespace Game {
 

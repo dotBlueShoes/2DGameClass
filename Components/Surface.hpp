@@ -1,5 +1,6 @@
 #pragma once
-#include "Vector.hpp"
+#include "../Framework.hpp"
+#include "../Math/Math.hpp"
 
 namespace Surface {
 
