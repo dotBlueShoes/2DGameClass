@@ -30,8 +30,13 @@ namespace Time {
 	float GetElapsedTime() {
 		currentTime = SystemClock::now();
 		tempTime = (currentTime - lastFrameTime);
-		lastFrameTime = SystemClock::now();
 		return tempTime.count();
+	}
+
+	float GetFrameTime() {
+		const float temp = GetElapsedTime();
+		lastFrameTime = SystemClock::now();
+		return temp;
 	}
 
 };

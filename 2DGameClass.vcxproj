@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -145,23 +145,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Entities\EntityPlayerCircle.hpp" />
-    <ClInclude Include="Entities\EntityPlayerSquare.hpp" />
-    <ClInclude Include="Components\Movable.hpp" />
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="InitialObjects.hpp" />
     <ClInclude Include="Math\Color.hpp" />
     <ClInclude Include="Draw.hpp" />
-    <ClInclude Include="Entity.hpp" />
-    <ClInclude Include="FunctionStack.hpp" />
     <ClInclude Include="Log.hpp" />
+    <ClInclude Include="Object\Surface.hpp" />
+    <ClInclude Include="Object\Transform.hpp" />
     <ClInclude Include="Pointer.hpp" />
-    <ClInclude Include="Systems\Move.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="Framework.hpp" />
     <ClInclude Include="Game.hpp" />
-    <ClInclude Include="Object.hpp" />
-    <ClInclude Include="Components\Transform.hpp" />
+    <ClInclude Include="Object\Object.hpp" />
     <ClInclude Include="Math\Vector.hpp" />
   </ItemGroup>
   <ItemGroup>

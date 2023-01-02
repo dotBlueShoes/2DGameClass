@@ -1,6 +1,7 @@
 #pragma once
 #include "Framework.hpp"
 #include "Math/Math.hpp"
+#include "Log.hpp"
 
 namespace Draw {
 
@@ -22,7 +23,8 @@ namespace Draw {
 	};
 
 	block Circle(const Renderer& renderer, const Vector::Vector2<float>& position, void* nRadius, const Color::Color& color) {
-		const auto& radius = *(float*)(nRadius);
+		const auto& radius = 30; // *(float*)(nRadius);
+		//Log::Info("Here! %f", radius);
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		for (int w = 0; w < radius * 2; w++) {
 			for (int h = 0; h < radius * 2; h++) {

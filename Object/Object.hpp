@@ -1,17 +1,22 @@
 #pragma once
-#include "Framework.hpp"
-#include "Components/Transform.hpp"
-#include "Components/Movable.hpp"
-#include "Math/Math.hpp"
-#include "Components/Collision.hpp"
-#include "Components/Surface.hpp"
+#include "../Framework.hpp"
+#include "../Math/Math.hpp"
+#include "Surface.hpp"
+#include "Transform.hpp"
+#include "Moveable.hpp"
+#include "Collision.hpp"
 
 namespace Object {	
 
+	//namespace Callback {
+	//	using Draw = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
+	//	using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::MoveData& moveData, const float& deltaTime);
+	//}
 	namespace Callback {
 		using Draw = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
-		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::MoveData& moveData, const float& deltaTime);
+		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::Rigidbody& rigidbody, const float& deltaTime);
 	}
+	
 	
 	const uint64 typeRange = 100000;
 	enum Type : uint64 {
@@ -33,24 +38,9 @@ namespace Object {
 		Surface::Surface surface;
 		Color::Color color;
 		Callback::Draw draw;
-		Moveable::MoveData moveData;
+		Moveable::Rigidbody rigidbody;
 		Callback::CalculateMove calculateMove;
 		Collision::SquareCollision collision;
 	};
-
-	//block Draw(
-	//	const Object& object, 
-	//	const Renderer& renderer, 
-	//	const float& radius
-	//) {
-	//	object.draw(renderer, object.transform.position, radius, object.color);
-	//}
-
-	
-
-	//block UpdatePosition(Object& object, Moveable::Moveable& moveable, const float& deltaTime) {
-	//	object.transform.position.x += moveable.velocity.x * deltaTime;
-	//	object.transform.position.y += moveable.velocity.y * deltaTime;
-	//}
 
 }

@@ -1,15 +1,13 @@
 #pragma once
 #include "../Framework.hpp"
-#include "../Math/Math.hpp"
+#include "../Log.hpp"
 #include "Transform.hpp"
-#include "Log.hpp"
 
 namespace Moveable {
 
-	const Vector::Vector2<float> zero { 0, 0 };
-
-	struct MoveData {
+	struct Rigidbody {
 		Vector::Vector2<float> velocity;
+		//Vector::Vector2<float> direction;
 	};
 
 	Vector::Vector2<float> GetRandomAngleForce(const float& force) {
@@ -19,13 +17,9 @@ namespace Moveable {
 		return temp;
 	}
 
-	constexpr const Vector::Vector2<float> CalculateMove(
-		const Transform::Transform& transform,
-		const MoveData& moveable,
-		const float& deltaTime
-	) {
-		return { transform.position.x + moveable.velocity.x * deltaTime,
-			transform.position.y + moveable.velocity.y * deltaTime };
+	constexpr const Vector::Vector2<float> CalculateMove(const Transform::Transform& transform, const Rigidbody& rigidbody, const float& deltaTime) {
+		return { transform.position.x + rigidbody.velocity.x * deltaTime,
+			transform.position.y + rigidbody.velocity.y * deltaTime };
 	}
 
 }

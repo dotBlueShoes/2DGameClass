@@ -15,5 +15,5 @@ namespace Surface {
 	struct Surface {
 		any type;
 	};
-	
+
 }

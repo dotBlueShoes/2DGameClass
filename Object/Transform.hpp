@@ -4,13 +4,17 @@
 
 namespace Transform {
 
+	//using Position = Vector::Vector2<float>;
+	//using Rotation = float;
+	//using Scale = Vector::Vector2<float>;
+
 	namespace Position {
 		const Vector::Vector2<float> zero { 0, 0 };
 		const Vector::Vector2<float> center { 920 / 2 , 360 / 2 };
 	}
 
 	namespace Rotation {
-		const float zero ( 0 );
+		const float zero(0);
 	}
 
 	namespace Scale {
@@ -23,6 +27,6 @@ namespace Transform {
 		Vector::Vector2<float> scale;
 	};
 
-	const Transform zero = { Position::zero, Rotation::zero, Scale::one,  };
+	const Transform zero = { Position::zero, Rotation::zero, Scale::one, };
 
 }
