@@ -4,6 +4,7 @@
 #include "Time.hpp"
 
 #include "SceneGraph.hpp"
+#include "CollisionLogic.hpp"
 #include "Draw.hpp"
 #include "Log.hpp"
 
@@ -248,9 +249,7 @@ namespace Game {
 		/*out*/ MainWindow& mainWindow,
 		/*out*/ Renderer& renderer
 	) {
-		
-		// Initializes SDL Library with following components.
-		DEBUG {
+		DEBUG { /* Initializes SDL Library with following components. */
 			if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 				Log::Error("Unable to initialize SDL: %s", SDL_GetError());
 				assert(false);
@@ -269,9 +268,8 @@ namespace Game {
 			renderer = SDL_CreateRenderer(mainWindow, initilizeOnFirstSupportingDriver, rendererFlags);
 		}
 
-		// To enable alpha channel in drawings.
+		/* To enable alpha channel in drawings. */
 		SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
-
 	}
 
 	namespace Update {
@@ -280,53 +278,37 @@ namespace Game {
 			/* chg */ SceneGraph::SceneGraph& sceneGraph,
 			const float& deltaTime
 		) {
-			vector<Vector::Vector2<float>> calculatedPositions;
+			vector<Vector::Vector2<float>> calculatedCirclePositions;
+			vector<Vector::Vector2<float>> calculatedSquarePositions;
 
-			// Calculate their new position. Circle
+			/* Calculate their new position.Circle */
 			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
 				auto& object = sceneGraph.circleObjects[i];
 				const Vector::Vector2 newPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
-				calculatedPositions.push_back(newPosition);
+				calculatedCirclePositions.push_back(newPosition);
 			}
 
-			// Square
+			/* Square */
 			for (size i = 0; i < sceneGraph.squareObjectsCount; i++) {
 				auto& object = sceneGraph.squareObjects[i];
 				const Vector::Vector2 newPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
-				calculatedPositions.push_back(newPosition);
+				calculatedSquarePositions.push_back(newPosition);
 			}
 
-			// Collision Detection based on those new positions.
-			//if constexpr (Collision::isCollisionOn) {
-			//	for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
-			//		auto& object = sceneGraph.circleObjects[i];
-			//
-			//		if (Object::IsType(object.identifier, Object::Type::Circle)) {
-			//			//const auto& type = (Surface::Circle*)(object.surface.type);
-			//			//const auto& radius = type->radius;
-			//			//CollideCircle(deltaTime, objectsCount, objects, i, calculatedPositions);
-			//		} else if (Object::IsType(object.identifier, Object::Type::Square)) {
-			//			//const auto& type = (Surface::Square*)(object.surface.type);
-			//			//const auto& size = type->size;
-			//			//CollideSquare(deltaTime, objectsCount, objects, i, calculatedPositions);
-			//		} else {
-			//			Log::Error("LogicUpdate: Unknown Object Type!");
-			//		}
-			//	}
-			//}
+			Collision::BounceOutsideBoundry(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 
-			// Update for new positions. Circle
+			/* Update for new positions. Circle */
 			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
 				auto& object = sceneGraph.circleObjects[i];
-				object.transform.position.x = calculatedPositions[i].x;
-				object.transform.position.y = calculatedPositions[i].y;
+				object.transform.position.x = calculatedCirclePositions[i].x;
+				object.transform.position.y = calculatedCirclePositions[i].y;
 			}
 
-			// Update for new positions. Square
+			/* Update for new positions. Square */
 			for (size i = 0; i < sceneGraph.squareObjectsCount; i++) {
 				auto& object = sceneGraph.squareObjects[i];
-				object.transform.position.x = calculatedPositions[i].x;
-				object.transform.position.y = calculatedPositions[i].y;
+				object.transform.position.x = calculatedSquarePositions[i].x;
+				object.transform.position.y = calculatedSquarePositions[i].y;
 			}
 
 		}

@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.hpp" />
+    <ClInclude Include="CollisionLogic.hpp" />
     <ClInclude Include="InitialObjects.hpp" />
     <ClInclude Include="Math\Color.hpp" />
     <ClInclude Include="Draw.hpp" />

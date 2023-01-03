@@ -11,6 +11,7 @@ namespace SceneGraph {
 		Object::Object* circleObjects;
 		size squareObjectsCount;
 		Object::Object* squareObjects;
+		Rectangle sceneBoundry;
 	};
 
 }

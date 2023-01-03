@@ -4,7 +4,7 @@
 #include "Surface.hpp"
 #include "Transform.hpp"
 #include "Moveable.hpp"
-#include "Collision.hpp"
+#include "CollisionBody.hpp"
 
 namespace Object {	
 
@@ -40,7 +40,7 @@ namespace Object {
 		Callback::Draw draw;
 		Moveable::Rigidbody rigidbody;
 		Callback::CalculateMove calculateMove;
-		Collision::SquareCollision collision;
+		Collision::Body collision;
 	};
 
 }
