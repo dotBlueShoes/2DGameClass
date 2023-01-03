@@ -11,6 +11,8 @@
 #include <array>
 #include <vector>
 
+#include <inttypes.h> // for the print macros
+
 // QUICK DEBUG
 //#include <iostream>
 //#include <fstream>

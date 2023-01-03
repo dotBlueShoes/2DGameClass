@@ -5,7 +5,7 @@
 namespace Surface {
 
 	struct Square {
-		Vector::Vector2<float> size;
+		Vector::Vector2<float> extent;
 	};
 
 	struct Circle {

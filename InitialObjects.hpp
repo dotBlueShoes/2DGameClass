@@ -1,37 +1,15 @@
 #pragma once
 #include "Framework.hpp"
-#include "Object/Object.hpp"
+#include "SceneGraph.hpp"
 #include "Draw.hpp"
 
-[[nodiscard]] auto CreateObjects() {
+const float radius(30.0f);
+Surface::Circle circleSurface1 { 30 };
+Rectangle collisionCircleBoundry { -radius, -radius, radius, radius };
+Surface::Square squareSurface1 { 60, 60 };
+Rectangle collisionSquareBoundry { -30, -30, 30, 30 };
 
-	const float radius(30.0f);
-
-	Surface::Circle circleSurface1 { 30 };
-	Surface::Square squareSurface1 { 60, 60 };
-
-	// Objects
-	const Object::Object square1 {
-		Object::Type::Square + 0,
-		{ { 100, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &squareSurface1 },
-		Color::red,
-		Draw::Square,
-		{ Moveable::GetRandomAngleForce(80.0f) },
-		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius }}
-	};
-
-	const Object::Object square2 {
-		Object::Type::Square + 1,
-		{ { 200, 200 }, Transform::Rotation::zero, Transform::Scale::one },
-		{ &squareSurface1 },
-		Color::green,
-		Draw::Square,
-		{ Moveable::GetRandomAngleForce(80.0f) },
-		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius }}
-	};
+[[nodiscard]] auto CreateCircleObjects() {
 
 	const Object::Object circle1 {
 		Object::Type::Circle + 0,
@@ -41,7 +19,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle2 {
@@ -52,7 +30,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius }}
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle3 {
@@ -63,7 +41,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle4 {
@@ -74,7 +52,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle5 {
@@ -85,7 +63,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle6 {
@@ -96,7 +74,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle7 {
@@ -107,7 +85,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle8 {
@@ -118,7 +96,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle9 {
@@ -129,7 +107,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle10 {
@@ -140,7 +118,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle11 {
@@ -151,7 +129,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle12 {
@@ -162,7 +140,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle13 {
@@ -173,7 +151,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	const Object::Object circle14 {
@@ -184,7 +162,7 @@
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		{ { -radius, -radius, radius, radius } }
+		collisionCircleBoundry
 	};
 
 	//array<Object::Object, 2> objects { square1, circle1 };
@@ -194,4 +172,32 @@
 	//};
 
 	return array<Object::Object, 4>{ circle1, circle2, circle3, circle4 };
+}
+
+[[nodiscard]] auto CreateSquareObjects() {
+
+	// Objects
+	const Object::Object square1 {
+		Object::Type::Square + 0,
+		{ { 100, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::red,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		collisionSquareBoundry
+	};
+
+	const Object::Object square2 {
+		Object::Type::Square + 1,
+		{ { 200, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::green,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		collisionSquareBoundry
+	};
+
+	return array<Object::Object, 2>{ square1, square2 };
 }

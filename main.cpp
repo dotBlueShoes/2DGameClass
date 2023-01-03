@@ -3,29 +3,38 @@
 #include "Game.hpp"
 #include "InitialObjects.hpp"
 
-int SDL_main(int argc, char** argv) {
+// TODO:
+// - srand((unsigned int)time(NULL));
+//   Do something with it...
+// - FixedLogicUpdate(); ?
+//   if(deltaTime)
+//   some OS integration.... winapi ? yes
+//   https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
 
-	// TODO:
-	// Do something with it...
-	// srand((unsigned int)time(NULL));
+int SDL_main(int argc, char** argv) {
 
 	DEBUG Log::Info("Running in Debug Mode...");
 
-	// Window
-	const array<character, 25> windowTitle { "2DGry-242539-Polecenie-7" };
-	const Vector::Vector2<uint32> windowViewport { 1280 , 720 };
-	const Color::Color windowColor { 23, 23, 23, 255 };
-	
 	// Window Itself can have it's parameters changed.
-	Window::WindowStruct windowStruct { windowViewport, windowTitle.size(), windowTitle.data(), windowColor };
+	const array<character, 25> windowTitle { "2DGry-242539-Polecenie-7" };
+	Window::WindowStruct windowStruct { { 1280 , 720 }, windowTitle.size(), windowTitle.data(), { 23, 23, 23, 255 } };
 
-	auto objects = CreateObjects();
+	auto circleObjects = CreateCircleObjects();
+	auto squareObjects = CreateSquareObjects();
+
+	SceneGraph::SceneGraph sceneGraph { 
+		&windowStruct.backgroundColor, 
+		circleObjects.size(), 
+		circleObjects.data(), 
+		squareObjects.size(), 
+		squareObjects.data()
+	};
 
 	{ // Game
 		MainWindow mainWindow;
 		Renderer mainRenderer;
 		Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
-		Game::MainLoop(mainRenderer, windowStruct.backgroundColor, objects.size(), objects.data());
+		Game::MainLoop(sceneGraph, mainRenderer);
 		Game::Destroy(mainWindow, mainRenderer);
 	}
 

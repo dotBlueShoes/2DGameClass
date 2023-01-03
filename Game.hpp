@@ -3,8 +3,7 @@
 #include "Window.hpp"
 #include "Time.hpp"
 
-#include "Object/Object.hpp"
-#include "Math/Math.hpp"
+#include "SceneGraph.hpp"
 #include "Draw.hpp"
 #include "Log.hpp"
 
@@ -278,41 +277,54 @@ namespace Game {
 	namespace Update {
 
 		void Logic (
-			const float& deltaTime,
-			const size& objectsCount,
-			/* chg */ Object::Object* objects
+			/* chg */ SceneGraph::SceneGraph& sceneGraph,
+			const float& deltaTime
 		) {
 			vector<Vector::Vector2<float>> calculatedPositions;
 
-			// Calculate their new position.
-			for (size i = 0; i < objectsCount; i++) {
-				auto& object = objects[i];
-				const Vector::Vector2 temp = object.calculateMove(object.transform, object.rigidbody, deltaTime);
-				calculatedPositions.push_back(temp);
+			// Calculate their new position. Circle
+			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
+				auto& object = sceneGraph.circleObjects[i];
+				const Vector::Vector2 newPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
+				calculatedPositions.push_back(newPosition);
+			}
+
+			// Square
+			for (size i = 0; i < sceneGraph.squareObjectsCount; i++) {
+				auto& object = sceneGraph.squareObjects[i];
+				const Vector::Vector2 newPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
+				calculatedPositions.push_back(newPosition);
 			}
 
 			// Collision Detection based on those new positions.
-			if constexpr (Collision::isCollisionOn) {
-				for (size i = 0; i < objectsCount; i++) {
-					auto& object = objects[i];
+			//if constexpr (Collision::isCollisionOn) {
+			//	for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
+			//		auto& object = sceneGraph.circleObjects[i];
+			//
+			//		if (Object::IsType(object.identifier, Object::Type::Circle)) {
+			//			//const auto& type = (Surface::Circle*)(object.surface.type);
+			//			//const auto& radius = type->radius;
+			//			//CollideCircle(deltaTime, objectsCount, objects, i, calculatedPositions);
+			//		} else if (Object::IsType(object.identifier, Object::Type::Square)) {
+			//			//const auto& type = (Surface::Square*)(object.surface.type);
+			//			//const auto& size = type->size;
+			//			//CollideSquare(deltaTime, objectsCount, objects, i, calculatedPositions);
+			//		} else {
+			//			Log::Error("LogicUpdate: Unknown Object Type!");
+			//		}
+			//	}
+			//}
 
-					if (Object::IsType(object.identifier, Object::Type::Circle)) {
-						//const auto& type = (Surface::Circle*)(object.surface.type);
-						//const auto& radius = type->radius;
-						//CollideCircle(deltaTime, objectsCount, objects, i, calculatedPositions);
-					} else if (Object::IsType(object.identifier, Object::Type::Square)) {
-						//const auto& type = (Surface::Square*)(object.surface.type);
-						//const auto& size = type->size;
-						//CollideSquare(deltaTime, objectsCount, objects, i, calculatedPositions);
-					} else {
-						Log::Error("LogicUpdate: Unknown Object Type!");
-					}
-				}
+			// Update for new positions. Circle
+			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
+				auto& object = sceneGraph.circleObjects[i];
+				object.transform.position.x = calculatedPositions[i].x;
+				object.transform.position.y = calculatedPositions[i].y;
 			}
 
-			// Update their positions.
-			for (size i = 0; i < objectsCount; i++) {
-				auto& object = objects[i];
+			// Update for new positions. Square
+			for (size i = 0; i < sceneGraph.squareObjectsCount; i++) {
+				auto& object = sceneGraph.squareObjects[i];
 				object.transform.position.x = calculatedPositions[i].x;
 				object.transform.position.y = calculatedPositions[i].y;
 			}
@@ -320,31 +332,23 @@ namespace Game {
 		}
 
 		void Render (
-			const Renderer& renderer, 
-			const Color::Color& backgroundColor, 
-			const size& objectsCount,
-			/* chg */ Object::Object* objects
+			/* chg */ SceneGraph::SceneGraph& sceneGraph,
+			const Renderer& renderer
 		) {
-			Draw::Background(renderer, backgroundColor);
+			Draw::Background(renderer, *sceneGraph.backgroundColor);
 
-			for (size i = 0; i < objectsCount; i++) {
-				const auto& object = objects[i];
+			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
+				const auto& object = sceneGraph.circleObjects[i];
+				const auto& type = (Surface::Circle*)(object.surface.type);
+				auto& radius = type->radius;
+				object.draw(renderer, object.transform.position, &radius, object.color);
+			}
 
-				if (Object::IsType(object.identifier, Object::Type::Circle)) {
-					Log::Info("Number: %i", objectsCount);
-					const auto& type = (Surface::Circle*)(object.surface.type);
-					auto& radius = type->radius;
-					//Log::Info("Radius: %f", );
-					object.draw(renderer, object.transform.position, &radius, object.color);
-				} else if (Object::IsType(object.identifier, Object::Type::Square)) {
-					//Log::Info("Square!");
-					//const auto& type = (Surface::Square*)(object.surface.type);
-					//auto& size = type->size;
-					//object.draw(renderer, object.transform.position, &size, object.color);
-				} else {
-					Log::Error("RenderUpdate: Unknown Object Type!");
-				}
-
+			for (size i = 0; i < sceneGraph.squareObjectsCount; i++) {
+				const auto& object = sceneGraph.squareObjects[i];
+				const auto& type = (Surface::Square*)(object.surface.type);
+				auto& extent = type->extent;
+				object.draw(renderer, object.transform.position, &extent, object.color);
 			}
 
 			SDL_RenderPresent(renderer);
@@ -352,24 +356,17 @@ namespace Game {
 	}
 
 	block MainLoop(
-		const Renderer& renderer, 
-		const Color::Color& backgroundColor, 
-		const size& objectsCount,
-		/* chg */ Object::Object* objects
+		/* chg */ SceneGraph::SceneGraph& sceneGraph,
+		const Renderer& renderer
 	) {
 		DEBUG Log::Info("Entering Main Loop");
 
 		Time::Start();
 	
-		// FixedLogicUpdate(); ?
-		// - if(deltaTime)
-		// - some OS integration.... winapi ? yes
-		// https://stackoverflow.com/questions/15683221/how-to-call-a-function-every-x-seconds
-	
 		while (Callback::HandleEvents() != Callback::Events::Quit) {
-			//SDL_Log("Milliseconds: %f", Time::GetElapsedTime());
-			Update::Logic(Time::GetFrameTime(), objectsCount, objects);
-			Update::Render(renderer, backgroundColor, objectsCount, objects);
+			//Log::Info("Milliseconds Since Last Frame: %f", Time::GetElapsedTime());
+			Update::Logic(sceneGraph, Time::GetFrameTime());
+			Update::Render(sceneGraph, renderer);
 		}
 
 		DEBUG Log::Info("Out of Main Loop");

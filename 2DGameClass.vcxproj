@@ -153,6 +153,7 @@
     <ClInclude Include="Object\Surface.hpp" />
     <ClInclude Include="Object\Transform.hpp" />
     <ClInclude Include="Pointer.hpp" />
+    <ClInclude Include="SceneGraph.hpp" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Window.hpp" />
     <ClInclude Include="Framework.hpp" />
