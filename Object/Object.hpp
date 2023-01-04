@@ -12,12 +12,16 @@ namespace Object {
 	//	using Draw = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
 	//	using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::MoveData& moveData, const float& deltaTime);
 	//}
+
+	struct Object;
+
 	namespace Callback {
-		using Draw = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
+		using Draw = void(*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
 		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::Rigidbody& rigidbody, const float& deltaTime);
+		using Logic = Vector::Vector2<float>(*)(const float& deltaTime, Object& object, const Vector::Vector2<float>& mousePosition, const Uint32& mouseBitMask, const Uint8* const keyboard);
+		using Render = void(*)(const Renderer& renderer, Object& object);
 	}
-	
-	
+
 	const uint64 typeRange = 100000;
 	enum Type : uint64 {
 		Square = 0,
@@ -41,6 +45,32 @@ namespace Object {
 		Moveable::Rigidbody rigidbody;
 		Callback::CalculateMove calculateMove;
 		Collision::Body collision;
+		Callback::Logic logic;
+		Callback::Render render;
 	};
+
+	namespace Nothing::Update {
+		Vector::Vector2<float> Logic(
+			const float& deltaTime,
+			Object& object,
+			const Vector::Vector2<float>& mousePosition,
+			const Uint32& mouseBitMask,
+			const Uint8* const keyboard
+		) {
+			return object.transform.position;
+		}
+
+		block RenderSquare(const Renderer& renderer, Object& object/*, Camera::Camera& camera */) {
+			const auto& type = (Surface::Square*)(object.surface.type);
+			auto& extent = type->extent;
+			object.draw(renderer, object.transform.position, &extent, object.color);
+		}
+
+		block RenderCircle(const Renderer& renderer, Object& object/*, Camera::Camera& camera */) {
+			const auto& type = (Surface::Circle*)(object.surface.type);
+			auto& extent = type->radius;
+			object.draw(renderer, object.transform.position, &extent, object.color);
+		}
+	}
 
 }

@@ -2,6 +2,7 @@
 #include "Framework.hpp"
 #include "Math/Math.hpp"
 #include "Object/Object.hpp"
+#include "GameObjects/MazeMap.hpp"
 
 namespace SceneGraph {
 
@@ -19,8 +20,10 @@ namespace SceneGraph {
 		size squareObjectsCount;
 		Object::Object* squareObjects;
 		Rectangle sceneBoundry;
+		GameObjects::MazeMap::Map map;
 		//size gizmoLinesCount = 0;
 		vector<Gizmo::Line> gizmoLines;
+		
 	};
 
 }

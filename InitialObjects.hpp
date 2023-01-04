@@ -3,11 +3,54 @@
 #include "SceneGraph.hpp"
 #include "Draw.hpp"
 
+#include "GameObjects/Player1.hpp"
+#include "GameObjects/Player2.hpp"
+#include "GameObjects/MazeMap.hpp"
+
 const float radius(30.0f);
 Surface::Circle circleSurface1 { 30 };
 Collision::CircleBody collisionCircle { radius };
 Surface::Square squareSurface1 { 60, 60 };
 Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
+
+
+[[nodiscard]] auto CreatePlayer1sObjects() {
+
+	const Object::Object player1 {
+		Object::Type::Circle + 0,
+		{ { 300, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &circleSurface1 },
+		Color::blue,
+		Draw::Circle,
+		{ 0, 0 },
+		Moveable::CalculateMove,
+		&collisionCircle,
+		GameObjects::Player1::Update::Logic,
+		GameObjects::Player1::Update::Render
+	};
+
+	return array<Object::Object, 1>{ player1 };
+
+}
+
+[[nodiscard]] auto CreatePlayer2sObjects() {
+
+	const Object::Object player2 {
+		Object::Type::Square + 0,
+		{ { 300, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::green,
+		Draw::Square,
+		{ 0, 0 },
+		Moveable::CalculateMove,
+		&collisionSquare,
+		GameObjects::Player2::Update::Logic,
+		GameObjects::Player2::Update::Render
+	};
+
+	return array<Object::Object, 1>{ player2 };
+
+}
 
 [[nodiscard]] auto CreateCircleObjects() {
 
@@ -19,7 +62,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle2 {
@@ -30,7 +75,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle3 {
@@ -41,7 +88,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle4 {
@@ -52,7 +101,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle5 {
@@ -63,7 +114,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle6 {
@@ -74,7 +127,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle, 
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle7 {
@@ -85,7 +140,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle, 
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle8 {
@@ -96,7 +153,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle, 
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle9 {
@@ -107,7 +166,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle, 
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle10 {
@@ -118,7 +179,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle, 
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle11 {
@@ -129,7 +192,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle12 {
@@ -140,7 +205,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle13 {
@@ -151,7 +218,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	const Object::Object circle14 {
@@ -162,7 +231,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Circle,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionCircle
+		&collisionCircle,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderCircle
 	};
 
 	//return array<Object::Object, 0>{};
@@ -190,7 +261,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square2 {
@@ -201,7 +274,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square3 {
@@ -212,7 +287,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square4 {
@@ -223,7 +300,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square5 {
@@ -234,7 +313,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square6 {
@@ -245,7 +326,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square7 {
@@ -256,7 +339,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square8 {
@@ -267,7 +352,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square9 {
@@ -278,7 +365,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square10 {
@@ -289,7 +378,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square11 {
@@ -300,7 +391,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	const Object::Object square12 {
@@ -311,7 +404,9 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
-		&collisionSquare
+		&collisionSquare,
+		Object::Nothing::Update::Logic,
+		Object::Nothing::Update::RenderSquare
 	};
 
 	//return array<Object::Object, 0>{};

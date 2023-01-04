@@ -49,7 +49,9 @@ namespace Collision {
 				//proposedPosition.x = Math::Clamp(object.transform.position.x, sceneGraph.sceneBoundry.x + extent.x, sceneGraph.sceneBoundry.w - extent.x);
 				object.rigidbody.velocity.x *= -1;
 				proposedPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
+
 				//Log::Info("Should Flip: X");
+				//Log::Info("Should Flip: X, %f, %f", proposedPosition.x, proposedPosition.y);
 			}
 
 			/* If we're outside Y boundry. */
@@ -57,8 +59,10 @@ namespace Collision {
 				/* If we hit it Then because we can be already in it! we change our position to be outside the boundry */
 				//proposedPosition.y = Math::Clamp(object.transform.position.y, sceneGraph.sceneBoundry.y + extent.y, sceneGraph.sceneBoundry.h - extent.y);
 				object.rigidbody.velocity.y *= -1;
-				object.calculateMove(object.transform, object.rigidbody, deltaTime);
+				proposedPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
+
 				//Log::Info("Should Flip: Y");
+				//Log::Info("Should Flip: Y, %f, %f", proposedPosition.x, proposedPosition.y);
 			}
 		}
 	}
