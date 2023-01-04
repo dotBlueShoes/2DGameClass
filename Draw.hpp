@@ -15,14 +15,24 @@ namespace Draw {
 		SDL_RenderClear(renderer);
 	}
 
-	block Square(const Renderer& renderer, const Vector::Vector2<float>& position, void* nArea, const Color::Color& color) {
+	block Square(
+		const Renderer& renderer, 
+		const Vector::Vector2<float>& position, 
+		void* nArea, 
+		const Color::Color& color
+	) {
 		const auto& area = *(Vector::Vector2<float>*)(nArea);
 		const Rectangle fillRect { (int)ceil(position.x - (int)(area.x / 2)), (int)ceil(position.y - (int)(area.y / 2)), (int)area.x, (int)area.y };
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		SDL_RenderFillRect(renderer, &fillRect);
 	};
 
-	block Circle(const Renderer& renderer, const Vector::Vector2<float>& position, void* nRadius, const Color::Color& color) {
+	block Circle(
+		const Renderer& renderer, 
+		const Vector::Vector2<float>& position, 
+		void* nRadius, 
+		const Color::Color& color
+	) {
 		const auto& radius = *(float*)(nRadius);
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
 		for (int w = 0; w < radius * 2; w++) {
@@ -35,5 +45,15 @@ namespace Draw {
 			}
 		}
 	};
+
+	block Line(
+		const Renderer& renderer, 
+		const Vector::Vector2<float>& originPosition, 
+		const Vector::Vector2<float>& destinPosition, 
+		const Color::Color& color
+	) {
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_RenderDrawLine(renderer, (int)(originPosition.x), (int)(originPosition.y), (int)(destinPosition.x), (int)(destinPosition.y));
+	}
 
 };

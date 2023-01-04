@@ -165,13 +165,18 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		&collisionCircle
 	};
 
-	//array<Object::Object, 2> objects { square1, circle1 };
-	//array<Object::Object, 14> objects { 
-	//	circle1, circle2, circle3, circle4, circle5, circle6, circle7, circle8,
-	//	circle9, circle10, circle11, circle12, circle13, circle14
+	//return array<Object::Object, 0>{};
+	return array<Object::Object, 6> { 
+		circle1, circle2, 
+		circle3, circle4,
+		circle5, circle6
+	};
+	//return array<Object::Object, 14>{ 
+	//	circle1, circle2, circle3, circle4, 
+	//	circle5, circle6, circle7, circle8,
+	//	circle9, circle10, circle11, circle12, 
+	//	circle13, circle14 
 	//};
-
-	return array<Object::Object, 4>{ circle1, circle2, circle3, circle4 };
 }
 
 [[nodiscard]] auto CreateSquareObjects() {
@@ -181,7 +186,7 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		Object::Type::Square + 0,
 		{ { 100, 200 }, Transform::Rotation::zero, Transform::Scale::one },
 		{ &squareSurface1 },
-		Color::red,
+		Color::purple,
 		Draw::Square,
 		{ Moveable::GetRandomAngleForce(80.0f) },
 		Moveable::CalculateMove,
@@ -199,5 +204,125 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 		&collisionSquare
 	};
 
-	return array<Object::Object, 2>{ square1, square2 };
+	const Object::Object square3 {
+		Object::Type::Square + 2,
+		{ { 200, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::white,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square4 {
+		Object::Type::Square + 3,
+		{ { 200, 400 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::brown,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square5 {
+		Object::Type::Square + 4,
+		{ { 300, 100 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::cyan,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square6 {
+		Object::Type::Square + 5,
+		{ { 300, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::gray,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square7 {
+		Object::Type::Square + 6,
+		{ { 300, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::lightGray,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square8 {
+		Object::Type::Square + 7,
+		{ { 300, 400 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::pink,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square9 {
+		Object::Type::Square + 8,
+		{ { 400, 100 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::orange,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square10 {
+		Object::Type::Square + 9,
+		{ { 400, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::darkGreen,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square11 {
+		Object::Type::Square + 10,
+		{ { 400, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::magenta,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	const Object::Object square12 {
+		Object::Type::Square + 11,
+		{ { 400, 400 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ &squareSurface1 },
+		Color::lightGreen,
+		Draw::Square,
+		{ Moveable::GetRandomAngleForce(80.0f) },
+		Moveable::CalculateMove,
+		&collisionSquare
+	};
+
+	//return array<Object::Object, 0>{};
+	return array<Object::Object, 6>{ 
+		square1, square2,
+		square3, square4,
+		square5, square6,
+	};
+	//return array<Object::Object, 12>{
+	//	square1, square2, square3, square4,
+	//	square5, square6, square7, square8,
+	//	square9, square10, square11, square12,
+	//};
 }

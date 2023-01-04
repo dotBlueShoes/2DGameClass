@@ -295,6 +295,10 @@ namespace Game {
 				calculatedSquarePositions.push_back(newPosition);
 			}
 
+			Collision::Circle::CheckCollisionCircle(sceneGraph, calculatedCirclePositions, deltaTime);
+			Collision::Square::CheckCollisionSquare(sceneGraph, calculatedSquarePositions, deltaTime);
+			Collision::BetweenTypes::CheckCollisionCircleSquare(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+
 			Collision::BounceOutsideBoundry(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 
 			/* Update for new positions. Circle */
@@ -333,6 +337,17 @@ namespace Game {
 				object.draw(renderer, object.transform.position, &extent, object.color);
 			}
 
+			{ // GIZMOS ARE FRAME OBJECTS ONLY ! ATLEAST FOR NOW !
+				for (size i = 0; i < sceneGraph.gizmoLines.size(); i++) {
+					auto& gizmoLine = sceneGraph.gizmoLines[i];
+					Draw::Line(renderer, gizmoLine.originPosition, gizmoLine.destinPosition, gizmoLine.color);
+				}
+
+				sceneGraph.gizmoLines.clear();
+				//sceneGraph.gizmoLinesCount = 0;
+				//delete[] sceneGraph.gizmoLines;
+			}
+				
 			SDL_RenderPresent(renderer);
 		}
 	}
