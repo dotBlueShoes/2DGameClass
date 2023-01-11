@@ -27,30 +27,47 @@ int SDL_main(int argc, char** argv) {
 	const Vector::Vector2<uint32> sceneViewport { 1280 , 720 };
 	Window::WindowStruct windowStruct { sceneViewport, windowTitle.size(), windowTitle.data(), { 23, 23, 23, 255 } };
 
-	
-
 	{ // Game
 		MainWindow mainWindow;
 		Renderer mainRenderer;
 		Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
 
+		// Camera
+		const Camera::Camera camera { Vector::Vector2<float> { 0, 0 }, sceneViewport };
+
+		// MAP
+		const int tileSize = 32;
+		GameObjects::MazeMap::TextureAtlas textureAtlas(GameObjects::MazeMap::CreateTextureAtlas(mainRenderer, 8, tileSize, "assets/tilemap.png"));
+		GameObjects::MazeMap::Map map(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/1.map"));
+
+		// Collisions
+		auto collisions = CreateCollisionsMap1(tileSize);
+
+		// Triggers
+		int startX = 2 * tileSize, startY = 2 * tileSize;
+		Trigger::Trigger exitTrigger { Rectangle { startX, startY, 32 * 2 + startX, 32 * 2 + startY }, Finish::Trigger };
+		array<Trigger::Trigger, 1> triggers { exitTrigger };
+
+		// Players
 		auto player1s = CreatePlayer1sObjects();
 		auto player2s = CreatePlayer2sObjects();
 
-		// MAP
-		GameObjects::MazeMap::TextureAtlas textureAtlas(GameObjects::MazeMap::CreateTextureAtlas(mainRenderer, 8, 32, "assets/tilemap.png"));
-		GameObjects::MazeMap::Map map(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/1.map"));
-
-		SceneGraph::SceneGraph sceneGraph{
+		SceneGraph::SceneGraph sceneGraph {
 			&windowStruct.backgroundColor,
+			camera,
 			player1s.size(),
 			player1s.data(),
 			player2s.size(),
 			player2s.data(),
-			{ 0, 0, sceneViewport.x, sceneViewport.y },
-			map
+			{ 0, 0, sceneViewport.x * 2, sceneViewport.y * 2 },
+			map,
+			collisions.size(),
+			collisions.data(),
+			triggers.size(),
+			triggers.data()
 		};
 
+		// OLD BALLS & SQUARES EXAMPLE
 		//auto circleObjects = CreateCircleObjects();
 		//auto squareObjects = CreateSquareObjects();
 		//

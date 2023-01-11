@@ -7,6 +7,7 @@
 #include "CollisionLogic.hpp"
 #include "Draw.hpp"
 #include "Log.hpp"
+#include "GameObjects/Finish.hpp"
 
 namespace Game {
 
@@ -121,6 +122,9 @@ namespace Game {
 			Collision::Square::CheckCollisionSquare(sceneGraph, calculatedSquarePositions, deltaTime);
 			Collision::BetweenTypes::CheckCollisionCircleSquare(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 			Collision::BounceOutsideBoundry(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+			//Collision::Bounce(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+			Collision::BounceInsideBoundry(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+			Camera::MoveByStep(deltaTime, sceneGraph.mainCamera, { 0, 0 }, mouseBitMask, keyboard, 4);
 
 			/* Update for new positions. Circle */
 			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
@@ -147,23 +151,24 @@ namespace Game {
 		) {
 			Draw::Background(renderer, *sceneGraph.backgroundColor);
 
-			GameObjects::MazeMap::Render(renderer, sceneGraph.map);
+			GameObjects::MazeMap::Render(renderer, sceneGraph.mainCamera, sceneGraph.map);
 			
+			Finish::Render(renderer, sceneGraph.mainCamera, { 96, 96 });
 
 			for (size i = 0; i < sceneGraph.circleObjectsCount; i++) {
 				auto& object = sceneGraph.circleObjects[i];
-				object.render(renderer, object);
+				object.render(renderer, sceneGraph.mainCamera, object);
 			}
 
 			for (size i = 0; i < sceneGraph.squareObjectsCount; i++) {
 				auto& object = sceneGraph.squareObjects[i];
-				object.render(renderer, object);
+				object.render(renderer, sceneGraph.mainCamera, object);
 			}
 
 			{ // GIZMOS ARE FRAME OBJECTS ONLY ! ATLEAST FOR NOW !
 				for (size i = 0; i < sceneGraph.gizmoLines.size(); i++) {
 					auto& gizmoLine = sceneGraph.gizmoLines[i];
-					Draw::Line(renderer, gizmoLine.originPosition, gizmoLine.destinPosition, gizmoLine.color);
+					Draw::Line(renderer, sceneGraph.mainCamera, gizmoLine.originPosition, gizmoLine.destinPosition, gizmoLine.color);
 				}
 
 				sceneGraph.gizmoLines.clear();

@@ -18,7 +18,7 @@ namespace File {
 
 		while (std::getline(file, temp)) {
 			//while()
-			DEBUG Log::Info("line");
+			//DEBUG Log::Info("line");
 			buffor += temp;
 			buffor += '\n';
 		}

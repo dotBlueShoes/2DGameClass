@@ -1,6 +1,7 @@
 #pragma once
 #include "Framework.hpp"
 #include "Math/Math.hpp"
+#include "Camera.hpp"
 #include "Log.hpp"
 
 namespace Draw {
@@ -17,6 +18,7 @@ namespace Draw {
 
 	block Square(
 		const Renderer& renderer, 
+		const Camera::Camera& camera,
 		const Vector::Vector2<float>& position, 
 		void* nArea, 
 		const Color::Color& color
@@ -27,8 +29,21 @@ namespace Draw {
 		SDL_RenderFillRect(renderer, &fillRect);
 	};
 
+	block Square(
+		const Renderer& renderer,
+		const Camera::Camera& camera,
+		const Vector::Vector2<float>& position,
+		const Vector::Vector2<float>& area,
+		const Color::Color& color
+	) {
+		const Rectangle fillRect { (int)ceil(position.x - (int)(area.x / 2)), (int)ceil(position.y - (int)(area.y / 2)), (int)area.x, (int)area.y };
+		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+		SDL_RenderFillRect(renderer, &fillRect);
+	};
+
 	block Circle(
 		const Renderer& renderer, 
+		const Camera::Camera& camera,
 		const Vector::Vector2<float>& position, 
 		void* nRadius, 
 		const Color::Color& color
@@ -47,7 +62,8 @@ namespace Draw {
 	};
 
 	block Line(
-		const Renderer& renderer, 
+		const Renderer& renderer,
+		const Camera::Camera& camera,
 		const Vector::Vector2<float>& originPosition, 
 		const Vector::Vector2<float>& destinPosition, 
 		const Color::Color& color

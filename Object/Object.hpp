@@ -1,10 +1,12 @@
 #pragma once
 #include "../Framework.hpp"
 #include "../Math/Math.hpp"
+#include "../Camera.hpp"
 #include "Surface.hpp"
 #include "Transform.hpp"
 #include "Moveable.hpp"
 #include "CollisionBody.hpp"
+
 
 namespace Object {	
 
@@ -16,10 +18,10 @@ namespace Object {
 	struct Object;
 
 	namespace Callback {
-		using Draw = void(*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
+		using Draw = void(*)(const Renderer&, const Camera::Camera& camera, const Vector::Vector2<float>&, void*, const Color::Color&);
 		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::Rigidbody& rigidbody, const float& deltaTime);
 		using Logic = Vector::Vector2<float>(*)(const float& deltaTime, Object& object, const Vector::Vector2<float>& mousePosition, const Uint32& mouseBitMask, const Uint8* const keyboard);
-		using Render = void(*)(const Renderer& renderer, Object& object);
+		using Render = void(*)(const Renderer& renderer, const Camera::Camera& camera, Object& object);
 	}
 
 	const uint64 typeRange = 100000;
@@ -60,16 +62,16 @@ namespace Object {
 			return object.transform.position;
 		}
 
-		block RenderSquare(const Renderer& renderer, Object& object/*, Camera::Camera& camera */) {
+		block RenderSquare(const Renderer& renderer, const Camera::Camera& camera, Object& object) {
 			const auto& type = (Surface::Square*)(object.surface.type);
 			auto& extent = type->extent;
-			object.draw(renderer, object.transform.position, &extent, object.color);
+			object.draw(renderer, camera, object.transform.position, &extent, object.color);
 		}
 
-		block RenderCircle(const Renderer& renderer, Object& object/*, Camera::Camera& camera */) {
+		block RenderCircle(const Renderer& renderer, const Camera::Camera& camera, Object& object) {
 			const auto& type = (Surface::Circle*)(object.surface.type);
 			auto& extent = type->radius;
-			object.draw(renderer, object.transform.position, &extent, object.color);
+			object.draw(renderer, camera, object.transform.position, &extent, object.color);
 		}
 	}
 

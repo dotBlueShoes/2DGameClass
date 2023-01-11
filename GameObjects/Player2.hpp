@@ -26,10 +26,16 @@ namespace GameObjects::Player2 {
 			return temp;
 		}
 
-		block Render(const Renderer& renderer, Object::Object& object /*, Camera::Camera& camera */) {
+		block Render(const Renderer& renderer, const Camera::Camera& camera, Object::Object& object) {
 			const auto& type = (Surface::Square*)(object.surface.type);
 			auto& extent = type->extent;
-			object.draw(renderer, object.transform.position, &extent, object.color);
+
+			const Vector::Vector2<float> renderPosition {
+				object.transform.position.x - camera.position.x,
+				object.transform.position.y - camera.position.y
+			};
+
+			object.draw(renderer, camera, renderPosition, &extent, object.color);
 		}
 
 	}

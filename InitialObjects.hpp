@@ -6,13 +6,19 @@
 #include "GameObjects/Player1.hpp"
 #include "GameObjects/Player2.hpp"
 #include "GameObjects/MazeMap.hpp"
+#include "GameObjects/Finish.hpp"
 
-const float radius(30.0f);
-Surface::Circle circleSurface1 { 30 };
+const float radius(15.0f);
+Surface::Circle circleSurface1 { 15.0f };
 Collision::CircleBody collisionCircle { radius };
-Surface::Square squareSurface1 { 60, 60 };
-Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 
+Surface::Square squareSurface1 { 30, 30 };
+Collision::SquareBody collisionSquare { -15.0f, -15.0f, 15.0f, 15.0f };
+
+
+auto FindSuitablePosition() {
+	return Vector::Vector2 { 0, 0 };
+}
 
 [[nodiscard]] auto CreatePlayer1sObjects() {
 
@@ -420,4 +426,55 @@ Collision::SquareBody collisionSquare { -30, -30, 30, 30 };
 	//	square5, square6, square7, square8,
 	//	square9, square10, square11, square12,
 	//};
+}
+
+
+[[nodiscard]] auto CreateCollisionsMap1(const int& tileSize) {
+	const size nonLoopLength = 4;
+	array<Rectangle, nonLoopLength + (4 * 7) + (6 * 3) + (3 * 6)> collisions;
+	collisions[0] = { 0, 0, 78 * 32, 2 * 32 }; // map top
+	collisions[1] = { 0, 0, 2 * 32, 44 * 32 }; // map left
+	collisions[2] = { 76 * 32, 0, 2 * 32, 44 * 32 }; // map right
+	collisions[3] = { 0, 43 * 32, 78 * 32, 2 * 32 }; // map bottom
+
+	for (int y = 0; y < 4; y++) { // Central Part
+		for (int x = 0; x < 7; x++) {
+			const int colliderLengthX = 4 * tileSize;
+			const int colliderLengthY = 4 * tileSize;
+
+			const auto& index = x + (y * 7);
+			const auto& startX = (4 * tileSize) + (x * 11 * tileSize);
+			const auto& startY = (4 * tileSize) + (y * 11 * tileSize);
+
+			collisions[nonLoopLength + index] = { startX, startY, colliderLengthX + startX, colliderLengthY + startY };
+		}
+	}
+
+	for (int y = 0; y < 3; y++) { // Pluses Y Part
+		for (int x = 0; x < 6; x++) {
+			const int colliderLengthX = 3 * tileSize;
+			const int colliderLengthY = 9 * tileSize;
+
+			const auto& index = x + (y * 6);
+			const auto& startX = (10 * tileSize) + (x * 11 * tileSize);
+			const auto& startY = (7 * tileSize) + (y * 11 * tileSize);
+
+			collisions[nonLoopLength + (4 * 7) + index] = {startX, startY, colliderLengthX + startX, colliderLengthY + startY};
+		}
+	}
+
+	for (int y = 0; y < 3; y++) { // Pluses X Part
+		for (int x = 0; x < 6; x++) {
+			const int colliderLengthX = 9 * tileSize;
+			const int colliderLengthY = 3 * tileSize;
+
+			const auto& index = x + (y * 6);
+			const auto& startX = (7 * tileSize) + (x * 11 * tileSize);
+			const auto& startY = (10 * tileSize) + (y * 11 * tileSize);
+
+			collisions[nonLoopLength + (4 * 7) + (3 * 6) + index] = { startX, startY, colliderLengthX + startX, colliderLengthY + startY };
+		}
+	}
+
+	return collisions;
 }

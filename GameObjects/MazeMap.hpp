@@ -5,12 +5,12 @@
 
 namespace GameObjects::MazeMap {
 
-	const char const sampleStringMap[] {
-		'0', '0', '0', '\n',
-		'0', '1', '0', '\n',
-		'0', '0', '0', '\n',
-		'\n'
-	};
+	//const char const sampleStringMap[] {
+	//	'0', '0', '0', '\n',
+	//	'0', '1', '0', '\n',
+	//	'0', '0', '0', '\n',
+	//	'\n'
+	//};
 
 	struct Sprite {
 		Rectangle spriteTransform;
@@ -104,9 +104,10 @@ namespace GameObjects::MazeMap {
 		std::string buffor;
 
 		File::Read(buffor, mapFilePath);
-		DEBUG Log::Info("Map Read:\n%s", buffor.c_str());
+		//DEBUG Log::Info("Map Read:\n%s", buffor.c_str());
 
 		uint8* board = new uint8[buffor.size()];
+		
 		
 		uint8 rowSize = 0;
 		for (; buffor[rowSize] != '\n'; rowSize++);
@@ -135,17 +136,17 @@ namespace GameObjects::MazeMap {
 		return Map { { 0, 0 }, textureAtlas, { rowSize, (uint8)(mapIndex / rowSize) }, board };
 	}
 
-	block Render(const Renderer& renderer, const Map& map) {
+	block Render(const Renderer& renderer, const Camera::Camera& camera, const Map& map) {
 		//const Vector::Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
 		//const Vector::Vector2<float> startPosition{ ceil((position.x + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((position.y + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
 		//printf("map: %f, %f\n", startPosition.x, startPosition.y);
 
-		const Vector::Vector2<float> startPosition{ ceil(map.position.x), ceil(map.position.y) };
-		Rectangle tileRenderScreenPosition = { 0, 0, map.textureAtlas.tileSize, map.textureAtlas.tileSize };
+		const Vector::Vector2<float> startPosition{ ceil(map.position.x - camera.position.x), ceil(map.position.y - camera.position.y) };
+		Rectangle tileRenderScreenPosition; // = { 0, 0, map.textureAtlas.tileSize, map.textureAtlas.tileSize };
 		tileRenderScreenPosition.x = startPosition.x;
 		tileRenderScreenPosition.y = startPosition.y;
-		tileRenderScreenPosition.w = ceil(map.textureAtlas.tileSize /** camera.zoom*/);
-		tileRenderScreenPosition.h = ceil(map.textureAtlas.tileSize /** camera.zoom*/);
+		tileRenderScreenPosition.w = ceil(map.textureAtlas.tileSize);
+		tileRenderScreenPosition.h = ceil(map.textureAtlas.tileSize);
 		for (int y = 0; y < map.extent.y; y++) {
 			for (int x = 0; x < map.extent.x; x++) {
 				SDL_RenderCopy (

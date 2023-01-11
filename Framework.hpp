@@ -42,10 +42,10 @@ using Texture = SDL_Texture*;
 
 
 #ifdef NDEBUG
-const bool debugLayer = false;
+constexpr const bool debugLayer = false;
 #endif
 #ifndef NDEBUG
-const bool debugLayer = true;
+constexpr const bool debugLayer = true;
 #endif
 
 #define DEBUG if constexpr (debugLayer)
