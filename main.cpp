@@ -27,39 +27,37 @@ int SDL_main(int argc, char** argv) {
 	const Vector::Vector2<uint32> sceneViewport { 1280 , 720 };
 	Window::WindowStruct windowStruct { sceneViewport, windowTitle.size(), windowTitle.data(), { 23, 23, 23, 255 } };
 
+	GameObjects::Player::Player player1 { 0 }, player2 { 0 };
+
 	{ // Game
 		MainWindow mainWindow;
 		Renderer mainRenderer;
 		Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
 
+		//auto scene1 = CreateScene1(mainRenderer, windowStruct.backgroundColor, sceneViewport);
 		// Camera
 		const Camera::Camera camera { Vector::Vector2<float> { 0, 0 }, sceneViewport };
-
+		// Players
+		auto player1s = CreatePlayer1sObjects();
+		auto player2s = CreatePlayer2sObjects();
 		// MAP
 		const int tileSize = 32;
 		GameObjects::MazeMap::TextureAtlas textureAtlas(GameObjects::MazeMap::CreateTextureAtlas(mainRenderer, 8, tileSize, "assets/tilemap.png"));
-		GameObjects::MazeMap::Map map(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/1.map"));
-
+		GameObjects::MazeMap::Map map(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/3.map"));
 		// Collisions
 		auto collisions = CreateCollisionsMap1(tileSize);
-
 		// Triggers
 		int startX = 2 * tileSize, startY = 2 * tileSize;
 		Trigger::Trigger exitTrigger { Rectangle { startX, startY, 32 * 2 + startX, 32 * 2 + startY }, Finish::Trigger };
 		array<Trigger::Trigger, 1> triggers { exitTrigger };
-
-		// Players
-		auto player1s = CreatePlayer1sObjects();
-		auto player2s = CreatePlayer2sObjects();
-
-		SceneGraph::SceneGraph sceneGraph {
+		auto scene1 = SceneGraph::SceneGraph {
 			&windowStruct.backgroundColor,
 			camera,
 			player1s.size(),
 			player1s.data(),
 			player2s.size(),
 			player2s.data(),
-			{ 0, 0, sceneViewport.x * 2, sceneViewport.y * 2 },
+			{ 0, 0, (int)sceneViewport.x * 2, (int)sceneViewport.y * 2 },
 			map,
 			collisions.size(),
 			collisions.data(),
@@ -67,24 +65,14 @@ int SDL_main(int argc, char** argv) {
 			triggers.data()
 		};
 
-		// OLD BALLS & SQUARES EXAMPLE
-		//auto circleObjects = CreateCircleObjects();
-		//auto squareObjects = CreateSquareObjects();
-		//
-		//SceneGraph::SceneGraph sceneGraph{
-		//	&windowStruct.backgroundColor,
-		//	circleObjects.size(),
-		//	circleObjects.data(),
-		//	squareObjects.size(),
-		//	squareObjects.data(),
-		//	{ 0, 0, sceneViewport.x, sceneViewport.y }
-		//};
+		array<SceneGraph::SceneGraph, 1> scenes { scene1 };
 
-		Game::MainLoop(sceneGraph, mainRenderer);
+		Game::MainLoop(scenes.size(), scenes.data(), mainRenderer);
 		Game::Destroy(mainWindow, mainRenderer);
 
-		GameObjects::MazeMap::DestroyMap(map);
-		GameObjects::MazeMap::DestroyTextureAtlas(textureAtlas);
+		
+		GameObjects::MazeMap::DestroyMap(scene1.map);
+		GameObjects::MazeMap::DestroyTextureAtlas(scene1.map.textureAtlas);
 	}
 
 	return 0;

@@ -150,6 +150,7 @@
     <ClInclude Include="File.hpp" />
     <ClInclude Include="GameObjects\Finish.hpp" />
     <ClInclude Include="GameObjects\MazeMap.hpp" />
+    <ClInclude Include="GameObjects\Player.hpp" />
     <ClInclude Include="GameObjects\Player1.hpp" />
     <ClInclude Include="GameObjects\Player2.hpp" />
     <ClInclude Include="Trigger.hpp" />
@@ -172,6 +173,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\maps\3.map" />
     <None Include="assets\maps\small.map" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

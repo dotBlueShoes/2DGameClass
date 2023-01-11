@@ -7,6 +7,7 @@
 #include "GameObjects/Player2.hpp"
 #include "GameObjects/MazeMap.hpp"
 #include "GameObjects/Finish.hpp"
+#include "GameObjects/Player.hpp"
 
 const float radius(15.0f);
 Surface::Circle circleSurface1 { 15.0f };
@@ -477,4 +478,44 @@ auto FindSuitablePosition() {
 	}
 
 	return collisions;
+}
+
+
+[[nodiscard]] auto CreateScene1(Renderer& renderer, Color::Color& backgroundColor, Vector::Vector2<uint32> viewport) {
+	// Camera
+	const Camera::Camera camera { Vector::Vector2<float> { 0, 0 }, viewport };
+
+	// Players
+	auto player1s = CreatePlayer1sObjects();
+	auto player2s = CreatePlayer2sObjects();
+
+	// MAP
+	const int tileSize = 32;
+	GameObjects::MazeMap::TextureAtlas textureAtlas(GameObjects::MazeMap::CreateTextureAtlas(renderer, 8, tileSize, "assets/tilemap.png"));
+	GameObjects::MazeMap::Map map(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/1.map"));
+
+	// Collisions
+	auto collisions = CreateCollisionsMap1(tileSize);
+
+	// Triggers
+	int startX = 2 * tileSize, startY = 2 * tileSize;
+	Trigger::Trigger exitTrigger { Rectangle { startX, startY, 32 * 2 + startX, 32 * 2 + startY }, Finish::Trigger };
+	array<Trigger::Trigger, 1> triggers { exitTrigger };
+
+	
+
+	return SceneGraph::SceneGraph {
+		&backgroundColor,
+		camera,
+		player1s.size(),
+		player1s.data(),
+		player2s.size(),
+		player2s.data(),
+		{ 0, 0, (int)viewport.x * 2, (int)viewport.y * 2 },
+		map,
+		collisions.size(),
+		collisions.data(),
+		triggers.size(),
+		triggers.data()
+	};
 }
