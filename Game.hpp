@@ -84,11 +84,9 @@ namespace Game {
 		uint32 mouseBitMask;
 
 		void Logic (
-			const size& scenesCount,
-			SceneGraph::SceneGraph* scenes,
+			SceneGraph::SceneGraph& scene,
 			const float& deltaTime
 		) {
-
 
 			SDL_PumpEvents();
 			mouseBitMask = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
@@ -96,10 +94,9 @@ namespace Game {
 			//const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
 			//const Vector::Vector2<float> mousePositionToWorld{ ((mousePosition.x - cameraMoveToCenter.x) / camera.zoom) - camera.position.x, ((mousePosition.y - cameraMoveToCenter.y) / camera.zoom) - camera.position.y };
 
-
 			/* Calculate their new position. Circle */
-			for (size i = 0; i < scenes[0].circleObjectsCount; i++) {
-				auto& object = scenes[0].circleObjects[i];
+			for (size i = 0; i < scene.circleObjectsCount; i++) {
+				auto& object = scene.circleObjects[i];
 
 				const Vector::Vector2<float> newPosition = object.logic(deltaTime, object, {0, 0}, mouseBitMask, keyboard);
 
@@ -109,8 +106,8 @@ namespace Game {
 			}
 
 			/* Square */
-			for (size i = 0; i < scenes[0].squareObjectsCount; i++) {
-				auto& object = scenes[0].squareObjects[i];
+			for (size i = 0; i < scene.squareObjectsCount; i++) {
+				auto& object = scene.squareObjects[i];
 
 				const Vector::Vector2<float> newPosition = object.logic(deltaTime, object, { 0, 0 }, mouseBitMask, keyboard);
 
@@ -119,27 +116,29 @@ namespace Game {
 				calculatedSquarePositions.push_back(newPosition);
 			}
 
-			Collision::Circle::CheckCollisionCircle(scenes[0], calculatedCirclePositions, deltaTime);
-			Collision::Square::CheckCollisionSquare(scenes[0], calculatedSquarePositions, deltaTime);
-			Collision::BetweenTypes::CheckCollisionCircleSquare(scenes[0], calculatedCirclePositions, calculatedSquarePositions, deltaTime);
-			Collision::BounceOutsideBoundry(scenes[0], calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+			Collision::Circle::CheckCollisionCircle(scene, calculatedCirclePositions, deltaTime);
+			Collision::Square::CheckCollisionSquare(scene, calculatedSquarePositions, deltaTime);
+			Collision::BetweenTypes::CheckCollisionCircleSquare(scene, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+			Collision::BounceOutsideBoundry(scene, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 			//Collision::Bounce(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
-			Collision::BounceInsideBoundry(scenes[0], calculatedCirclePositions, calculatedSquarePositions, deltaTime);
-			Camera::MoveByStep(deltaTime, scenes[0].mainCamera, { 0, 0 }, mouseBitMask, keyboard, 4);
+			Camera::MoveByStep(deltaTime, scene.mainCamera, { 0, 0 }, mouseBitMask, keyboard, 4);
 
 			/* Update for new positions. Circle */
-			for (size i = 0; i < scenes[0].circleObjectsCount; i++) {
-				auto& object = scenes[0].circleObjects[i];
+			for (size i = 0; i < scene.circleObjectsCount; i++) {
+				auto& object = scene.circleObjects[i];
 				object.transform.position.x = calculatedCirclePositions[i].x;
 				object.transform.position.y = calculatedCirclePositions[i].y;
 			}
 
 			/* Update for new positions. Square */
-			for (size i = 0; i < scenes[0].squareObjectsCount; i++) {
-				auto& object = scenes[0].squareObjects[i];
+			for (size i = 0; i < scene.squareObjectsCount; i++) {
+				auto& object = scene.squareObjects[i];
 				object.transform.position.x = calculatedSquarePositions[i].x;
 				object.transform.position.y = calculatedSquarePositions[i].y;
 			}
+
+			/* Triggers can invoke special movement to all objects or other we want that close to the end ! */
+			Collision::BounceInsideBoundry(scene, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 
 			calculatedCirclePositions.clear();
 			calculatedSquarePositions.clear();
@@ -147,33 +146,54 @@ namespace Game {
 		}
 
 		void Render (
-			const size& scenesCount,
-			SceneGraph::SceneGraph* scenes,
+			SceneGraph::SceneGraph& scene,
 			const Renderer& renderer
 		) {
-			Draw::Background(renderer, *scenes[0].backgroundColor);
+			Draw::Background(renderer, *scene.backgroundColor);
 
-			GameObjects::MazeMap::Render(renderer, scenes[0].mainCamera, scenes[0].map);
+			GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.map);
 			
-			Finish::Render(renderer, scenes[0].mainCamera, { 96, 96 });
+			// Gizmos !!!!
+			const Vector::Vector2<float> finishPosiiton { 96 , 96 };
+			Finish::Render(renderer, scene.mainCamera, finishPosiiton);
+			const Vector::Vector2<float> gizmoStart { 
+				finishPosiiton.x - scene.mainCamera.position.x,
+				finishPosiiton.y - scene.mainCamera.position.y
+			};
 
-			for (size i = 0; i < scenes[0].circleObjectsCount; i++) {
-				auto& object = scenes[0].circleObjects[i];
-				object.render(renderer, scenes[0].mainCamera, object);
+			const Vector::Vector2<float> gizmoEnd1 { 
+				scene.circleObjects[0].transform.position.x - scene.mainCamera.position.x,
+				scene.circleObjects[0].transform.position.y - scene.mainCamera.position.y
+			};
+			const Vector::Vector2<float> gizmoEnd2{
+				scene.squareObjects[0].transform.position.x - scene.mainCamera.position.x,
+				scene.squareObjects[0].transform.position.y - scene.mainCamera.position.y
+			};
+
+			scene.gizmoLines.push_back( SceneGraph::Gizmo::Line { 
+				gizmoStart, gizmoEnd1, { 255, 0, 255, 255 }
+			});
+			scene.gizmoLines.push_back( SceneGraph::Gizmo::Line { 
+				gizmoStart, gizmoEnd2, { 255, 0, 255, 255 }
+			});
+
+			for (size i = 0; i < scene.circleObjectsCount; i++) {
+				auto& object = scene.circleObjects[i];
+				object.render(renderer, scene.mainCamera, object);
 			}
 
-			for (size i = 0; i < scenes[0].squareObjectsCount; i++) {
-				auto& object = scenes[0].squareObjects[i];
-				object.render(renderer, scenes[0].mainCamera, object);
+			for (size i = 0; i < scene.squareObjectsCount; i++) {
+				auto& object = scene.squareObjects[i];
+				object.render(renderer, scene.mainCamera, object);
 			}
 
 			{ // GIZMOS ARE FRAME OBJECTS ONLY ! ATLEAST FOR NOW !
-				for (size i = 0; i < scenes[0].gizmoLines.size(); i++) {
-					auto& gizmoLine = scenes[0].gizmoLines[i];
-					Draw::Line(renderer, scenes[0].mainCamera, gizmoLine.originPosition, gizmoLine.destinPosition, gizmoLine.color);
+				for (size i = 0; i < scene.gizmoLines.size(); i++) {
+					auto& gizmoLine = scene.gizmoLines[i];
+					Draw::Line(renderer, scene.mainCamera, gizmoLine.originPosition, gizmoLine.destinPosition, gizmoLine.color);
 				}
 
-				scenes[0].gizmoLines.clear();
+				scene.gizmoLines.clear();
 				//sceneGraph.gizmoLinesCount = 0;
 				//delete[] sceneGraph.gizmoLines;
 			}
@@ -190,11 +210,15 @@ namespace Game {
 		DEBUG Log::Info("Entering Main Loop");
 
 		Time::Start();
+
+		SceneGraph::scenes = scenes;
+		SceneGraph::currentScene = &scenes[0];
 	
 		while (Callback::HandleEvents() != Callback::Events::Quit) {
 			//Log::Info("Milliseconds Since Last Frame: %f", Time::GetElapsedTime());
-			Update::Logic(scenesCount, scenes, Time::GetFrameTime());
-			Update::Render(scenesCount, scenes, renderer);
+			//if (SceneGraph::isStopped) continue;
+			Update::Logic(*SceneGraph::currentScene, Time::GetFrameTime());
+			Update::Render(*SceneGraph::currentScene, renderer);
 		}
 
 		DEBUG Log::Info("Out of Main Loop");

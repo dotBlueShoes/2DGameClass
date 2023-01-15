@@ -2,6 +2,7 @@
 #include "Framework.hpp"
 #include "SceneGraph.hpp"
 #include "Draw.hpp"
+#include "Spawn.hpp"
 
 #include "GameObjects/Player1.hpp"
 #include "GameObjects/Player2.hpp"
@@ -16,16 +17,15 @@ Collision::CircleBody collisionCircle { radius };
 Surface::Square squareSurface1 { 30, 30 };
 Collision::SquareBody collisionSquare { -15.0f, -15.0f, 15.0f, 15.0f };
 
-
-auto FindSuitablePosition() {
-	return Vector::Vector2 { 0, 0 };
-}
-
-[[nodiscard]] auto CreatePlayer1sObjects() {
+[[nodiscard]] auto CreatePlayer1sObjects(
+	const GameObjects::MazeMap::Map& map,
+	const size& collisionsCount,
+	const Rectangle* collisions
+) {
 
 	const Object::Object player1 {
 		Object::Type::Circle + 0,
-		{ { 300, 200 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ Spawn::GetRandomValidPosition(map, collisionsCount, collisions) , Transform::Rotation::zero, Transform::Scale::one },
 		{ &circleSurface1 },
 		Color::blue,
 		Draw::Circle,
@@ -40,11 +40,15 @@ auto FindSuitablePosition() {
 
 }
 
-[[nodiscard]] auto CreatePlayer2sObjects() {
+[[nodiscard]] auto CreatePlayer2sObjects(
+	const GameObjects::MazeMap::Map& map,
+	const size& collisionsCount,
+	const Rectangle* collisions
+) {
 
 	const Object::Object player2 {
 		Object::Type::Square + 0,
-		{ { 300, 300 }, Transform::Rotation::zero, Transform::Scale::one },
+		{ Spawn::GetRandomValidPosition(map, collisionsCount, collisions), Transform::Rotation::zero, Transform::Scale::one },
 		{ &squareSurface1 },
 		Color::green,
 		Draw::Square,
@@ -56,7 +60,6 @@ auto FindSuitablePosition() {
 	};
 
 	return array<Object::Object, 1>{ player2 };
-
 }
 
 [[nodiscard]] auto CreateCircleObjects() {
@@ -480,42 +483,37 @@ auto FindSuitablePosition() {
 	return collisions;
 }
 
+[[nodiscard]] auto CreateCollisionsMap2(const int& tileSize) {
+	const size nonLoopLength = 4;
+	array<Rectangle, nonLoopLength + (4 * 7)> collisions;
+	collisions[0] = { 0, 0, 64 * tileSize, 2 * tileSize }; // map top
+	collisions[1] = { 0, 0, 2 * tileSize, 44 * tileSize }; // map left
+	collisions[2] = { 58 * tileSize, 0, 2 * tileSize, 44 * tileSize }; // map right
+	collisions[3] = { 0, 34 * tileSize, 64 * tileSize, 2 * tileSize }; // map bottom
 
-[[nodiscard]] auto CreateScene1(Renderer& renderer, Color::Color& backgroundColor, Vector::Vector2<uint32> viewport) {
-	// Camera
-	const Camera::Camera camera { Vector::Vector2<float> { 0, 0 }, viewport };
+	for (int y = 0; y < 4; y++) { // Central Part
+		for (int x = 0; x < 7; x++) {
+			const int colliderLengthX = 4 * tileSize;
+			const int colliderLengthY = 4 * tileSize;
 
-	// Players
-	auto player1s = CreatePlayer1sObjects();
-	auto player2s = CreatePlayer2sObjects();
+			const auto& index = x + (y * 7);
+			const auto& startX = (4 * tileSize) + (x * 8 * tileSize);
+			const auto& startY = (4 * tileSize) + (y * 8 * tileSize);
 
-	// MAP
-	const int tileSize = 32;
-	GameObjects::MazeMap::TextureAtlas textureAtlas(GameObjects::MazeMap::CreateTextureAtlas(renderer, 8, tileSize, "assets/tilemap.png"));
-	GameObjects::MazeMap::Map map(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/1.map"));
+			collisions[nonLoopLength + index] = { startX, startY, colliderLengthX + startX, colliderLengthY + startY };
+		}
+	}
 
-	// Collisions
-	auto collisions = CreateCollisionsMap1(tileSize);
+	return collisions;
+}
 
-	// Triggers
-	int startX = 2 * tileSize, startY = 2 * tileSize;
-	Trigger::Trigger exitTrigger { Rectangle { startX, startY, 32 * 2 + startX, 32 * 2 + startY }, Finish::Trigger };
-	array<Trigger::Trigger, 1> triggers { exitTrigger };
+[[nodiscard]] auto CreateCollisionsMap3(const int& tileSize) {
+	const size nonLoopLength = 4;
+	array<Rectangle, nonLoopLength> collisions;
+	collisions[0] = { 0, 0, 86 * tileSize, 2 * tileSize }; // map top
+	collisions[1] = { 0, 0, 2 * tileSize, 44 * tileSize }; // map left
+	collisions[2] = { 84 * tileSize, 0, 2 * tileSize, 44 * tileSize }; // map right
+	collisions[3] = { 0, 37 * tileSize, 86 * tileSize, 2 * tileSize }; // map bottom
 
-	
-
-	return SceneGraph::SceneGraph {
-		&backgroundColor,
-		camera,
-		player1s.size(),
-		player1s.data(),
-		player2s.size(),
-		player2s.data(),
-		{ 0, 0, (int)viewport.x * 2, (int)viewport.y * 2 },
-		map,
-		collisions.size(),
-		collisions.data(),
-		triggers.size(),
-		triggers.data()
-	};
+	return collisions;
 }

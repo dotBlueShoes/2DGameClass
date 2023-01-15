@@ -97,8 +97,9 @@ namespace GameObjects::MazeMap {
 
 	Map CreateMapFromFile(
 		const Vector::Vector2<float>& position,
-		const TextureAtlas& textureAtlas, 
-		const char* mapFilePath
+		const TextureAtlas& textureAtlas,
+		const char* mapFilePath,
+		const Vector::Vector2<uint8>& extent
 	) {
 
 		std::string buffor;
@@ -133,7 +134,7 @@ namespace GameObjects::MazeMap {
 
 		DEBUG Log::Info("InputIndex %d, MapIndex %d, RowSize, %d", inputIndex, mapIndex, rowSize);
 
-		return Map { { 0, 0 }, textureAtlas, { rowSize, (uint8)(mapIndex / rowSize) }, board };
+		return Map { { 0, 0 }, textureAtlas, extent, board };
 	}
 
 	block Render(const Renderer& renderer, const Camera::Camera& camera, const Map& map) {

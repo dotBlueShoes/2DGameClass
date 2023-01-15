@@ -5,6 +5,8 @@
 #include "GameObjects/MazeMap.hpp"
 #include "Trigger.hpp"
 #include "Camera.hpp"
+#include "GameObjects/Player.hpp"
+#include "Spawn.hpp"
 
 namespace SceneGraph {
 
@@ -31,8 +33,38 @@ namespace SceneGraph {
 		vector<Gizmo::Line> gizmoLines;
 	};
 
-	block Restart(SceneGraph& sceneGraph) {
-		//sceneGraph.mainCamera.position = { 0, 0 };
+
+	GameObjects::Player::Player player1{ 0 }, player2{ 0 };
+	size currentSceneIndex = 0;
+	size scenesCount = 3;
+	SceneGraph* currentScene;
+	SceneGraph* scenes;
+
+	block Restart() {
+		DEBUG Log::Info("Restart!");
+
+		for (size i = 0; i < currentScene->circleObjectsCount; i++) {
+			currentScene->circleObjects->transform.position = Spawn::GetRandomValidPosition(
+				currentScene->map, currentScene->staticCollisionsCount, currentScene->staticCollisions
+			);
+		}
+
+		for (size i = 0; i < currentScene->squareObjectsCount; i++) {
+			currentScene->squareObjects->transform.position = { 300, 300 };
+		}
+
+	}
+
+	block NextLevel() {
+		DEBUG Log::Info("NextLevel!");
+
+		++currentSceneIndex;
+		if (currentSceneIndex == scenesCount) {
+			DEBUG Log::Info("Player1 scored: %d, Player2 scored: %d", player1.score, player2.score);
+			currentSceneIndex = 0;
+		}
+		currentScene = &scenes[currentSceneIndex];
+		Restart();
 	}
 
 }

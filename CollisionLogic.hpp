@@ -85,7 +85,7 @@ namespace Collision {
 				if (proposedPosition.x > trigger.boundry.x && proposedPosition.y > trigger.boundry.y &&
 					proposedPosition.x < trigger.boundry.w && proposedPosition.y < trigger.boundry.h
 					) {
-					trigger.callback();
+					trigger.callback(SceneGraph::player1);
 				}
 			}
 			
@@ -103,7 +103,7 @@ namespace Collision {
 				if (proposedPosition.x > trigger.boundry.x && proposedPosition.y > trigger.boundry.y &&
 					proposedPosition.x < trigger.boundry.w && proposedPosition.y < trigger.boundry.h
 					) {
-					trigger.callback();
+					trigger.callback(SceneGraph::player2);
 				}
 			}
 		}
