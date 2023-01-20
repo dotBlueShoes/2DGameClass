@@ -11,4 +11,8 @@ namespace Math {
 		return value;
 	}
 
+	getter Sign(const int x) {
+		return (x >> 31) | 1;
+	}
+
 }

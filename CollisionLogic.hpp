@@ -492,12 +492,24 @@ namespace Collision {
 					if (Collision::isSeperationOn) {
 
 						// Rigidbody Logic
-						Moveable::CollisionHitY(object.rigidbody);
+						//
+
+						
 
 						Vector::Vector2<float> separation { // Simple normalization
 							(objectCenter.x - point.x) / lengthBetween,
 							(objectCenter.y - point.y) / lengthBetween
 						};
+
+						if (separation.y < -Math::Constants::fepsilon)
+							Moveable::CollisionHitY(object.rigidbody);
+
+						//Vector::Vector2<float> direction {
+						//	Math::Sign(separation.x),
+						//	Math::Sign(separation.y)
+						//};
+						//
+						//DEBUG Log::Info("separation: %f, %f", direction.x, direction.y);
 
 						auto recalculatedPosition = Vector::Addition(
 							proposedPosition, {

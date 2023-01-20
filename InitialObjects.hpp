@@ -433,7 +433,7 @@ Collision::SquareBody collisionSquare { -15.0f, -15.0f, 15.0f, 15.0f };
 }
 
 getter CreateCollisionsSidescrollerMap(const int& tileSize) {
-	const size collidersCount(6);
+	const size collidersCount(7);
 
 	return array<Rectangle, collidersCount> {
 		// It should work this way matthew but doesn't... // start_x, start_y, start_x + end_x, start_y + end_y.
@@ -443,7 +443,8 @@ getter CreateCollisionsSidescrollerMap(const int& tileSize) {
 		Rectangle { 40 * tileSize, 9 * tileSize, 43 * tileSize, (9 + 1) * tileSize }, // platform_1
 		Rectangle { 46 * tileSize, 11 * tileSize, 94 * tileSize, (11 + 1) * tileSize },
 		Rectangle { 65 * tileSize, 9 * tileSize, (65 + 2) * tileSize, (9 + 1) * tileSize }, // platform_2
-		Rectangle { 71 * tileSize, 8 * tileSize, (71 + 2) * tileSize, (8 + 1) * tileSize }  // platform_3
+		Rectangle { 71 * tileSize, 8 * tileSize, (71 + 2) * tileSize, (8 + 1) * tileSize },  // platform_3
+		Rectangle { 65 * tileSize, 10 * tileSize, (65 + 1) * tileSize, (10 + 1) * tileSize }  // block
 	};
 }
 
