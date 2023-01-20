@@ -3,12 +3,32 @@
 #include "../Log.hpp"
 #include "Transform.hpp"
 
+#include "Jump.hpp"
+
 namespace Moveable {
 
 	struct Rigidbody {
 		Vector::Vector2<float> velocity;
-		//Vector::Vector2<float> direction;
+		Jumping::OnStopJumping extra = nullptr;
+
+		float personalGravity = Math::Constants::g<float>;
+		float timeAcceleration = 0.0f; // 
+		
 	};
+
+	block Accelerate(Rigidbody& rigidbody, const float& deltaTime) {
+		rigidbody.timeAcceleration += deltaTime;
+	}
+
+	block CollisionHitY(Rigidbody& rigidbody) {
+		rigidbody.timeAcceleration = 0.0f;
+		auto callback = (Jumping::OnStopJumping)(rigidbody.extra);
+		callback();
+	}
+
+	float GetGravityInfluence(const Rigidbody& rigidoby) {
+		return (rigidoby.personalGravity * rigidoby.timeAcceleration); // +velocity.y;
+	}
 
 	Vector::Vector2<float> GetRandomAngleForce(const float& force) {
 		const float angle = (float)(rand() * 3.14159 / 180);
@@ -17,8 +37,8 @@ namespace Moveable {
 		return temp;
 	}
 
-	[[nodiscard]] constexpr const Vector::Vector2<float> CalculateMove(const Transform::Transform& transform, const Rigidbody& rigidbody, const float& deltaTime) {
-		return { transform.position.x + rigidbody.velocity.x * deltaTime,
+	const getter CalculateMove(const Transform::Transform& transform, const Rigidbody& rigidbody, const float& deltaTime) {
+		return Vector::Vector2<float> { transform.position.x + rigidbody.velocity.x * deltaTime,
 			transform.position.y + rigidbody.velocity.y * deltaTime };
 	}
 

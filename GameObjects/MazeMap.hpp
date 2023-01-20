@@ -26,7 +26,7 @@ namespace GameObjects::MazeMap {
 	struct Map {
 		Vector::Vector2<float> position; // offset?
 		TextureAtlas textureAtlas;
-		Vector::Vector2<uint8> extent; // - board 2dim count
+		Vector::Vector2<uint8> extent; // - board 2dim count // text_selection != number_of_cols ... text_selection == number_of_cols - 1.
 		uint8* board;
 	};
 

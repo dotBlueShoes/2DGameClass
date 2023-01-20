@@ -42,7 +42,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -153,6 +153,8 @@
     <ClInclude Include="GameObjects\Player.hpp" />
     <ClInclude Include="GameObjects\Player1.hpp" />
     <ClInclude Include="GameObjects\Player2.hpp" />
+    <ClInclude Include="Math\Constants.hpp" />
+    <ClInclude Include="Object\Jump.hpp" />
     <ClInclude Include="Spawn.hpp" />
     <ClInclude Include="Trigger.hpp" />
     <ClInclude Include="InitialObjects.hpp" />

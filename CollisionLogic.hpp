@@ -417,13 +417,14 @@ namespace Collision {
 	namespace BetweenTypes {
 
 		void CollisionCircleSquareStatic(
-			const Rectangle& sceneBoundry, 
-			Vector::Vector2<float>& position,
+			SceneGraph::SceneGraph& sceneGraph, 
+			Object::Object& object,
 			Vector::Vector2<float>& proposedPosition,
 			const float& radius,
 			const Rectangle& otherBoundry
 		) {
 			const Vector::Vector2<float>& objectCenter = proposedPosition;
+			auto& position = object.transform.position;
 
 			// Punkt na prostokacie najblizszy srodkowi okregu.
 			Vector::Vector2<float> point;
@@ -434,8 +435,14 @@ namespace Collision {
 
 			const float lengthBetween = (float)Vector::LengthBetween(objectCenter, point);
 
+			//DEBUG Log::Info("SC %f, %f", lengthBetween, radius);
+			//DEBUG Log::Info("%f, %f", objectCenter.y, point.y);
+			//DEBUG sceneGraph.gizmoLines.push_back({ objectCenter, point, { 255, 0, 0, 255 } });
+
 			if (lengthBetween < radius) { // Collision Detected
+
 				if (objectCenter.x == point.x && objectCenter.y == point.y) {
+
 					// Środek okręgu leży na prostokącie, wtedy wektor separacji trzeba policzyć, jak w przypadku prostokątów
 					if (Collision::isSeperationOn) {
 						const float left = objectCenter.x - otherBoundry.x + radius;
@@ -449,29 +456,65 @@ namespace Collision {
 						top < bottom ? separation.y = -top : separation.y = bottom;
 						abs(separation.x) < abs(separation.y) ? separation.y = 0 : separation.x = 0;
 
-						auto recalculatedPosition = Vector::Subtract(
-							position, {
+						//DEBUG sceneGraph.gizmoLines.push_back({ position, separation, { 255, 0, 0, 255 } });
+						//DEBUG sceneGraph.gizmoLines.push_back({ Vector::Vector2<float>{ 0, 0 }, position, {255, 0, 0, 255} });
+
+						//DEBUG Log::Info("HERE NOW");
+						//DEBUG Log::Info("old: %f, %f", proposedPosition.x, proposedPosition.y);
+						//DEBUG Log::Info("sep: %f, %f", separation.x, separation.y);
+
+						auto recalculatedPosition = Vector::Addition(
+							proposedPosition, {
 								separation.x,
 								separation.y
 							}
 						);
-						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneBoundry.x + radius, sceneBoundry.w - radius);
-						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneBoundry.y + radius, sceneBoundry.h - radius);
+
+						//DEBUG Log::Info("pos: %f, %f", recalculatedPosition.x, recalculatedPosition.y);
+
+						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneGraph.sceneBoundry.x + radius, sceneGraph.sceneBoundry.w - radius);
+						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneGraph.sceneBoundry.y + radius, sceneGraph.sceneBoundry.h - radius);
 					}
+
 				} else {
-					Vector::Vector2<float> separation { // Simple normalization
-						(objectCenter.x - point.x) / (float)lengthBetween,
-						(objectCenter.y - point.y) / (float)lengthBetween
-					};
+
+					//DEBUG sceneGraph.gizmoLines.push_back({ Vector::Vector2<float>{ 0, 0 }, position, {255, 0, 0, 255} });
+					//DEBUG {
+					//	const Vector::Vector2 seppos = Vector::Addition(position, separation);
+						//Log::Info("Separation: %f, %f, Position: %f, %f", separation.x, separation.y, position.x, position.y);
+						//Log::Info("%f, %f", (objectCenter.y - point.y), lengthBetween);
+						//Log::Info("%f", separation.y * (radius - lengthBetween));
+						//Log::Info("Separation: %f, %f, Position: %f, %f", objectCenter.x, objectCenter.y, position.x, position.y);
+						//sceneGraph.gizmoLines.push_back({ objectCenter, point, { 255, 0, 0, 255 } });
+					//}
+					//DEBUG 
+
 					if (Collision::isSeperationOn) {
-						const auto recalculatedPosition = Vector::Addition(
-							position, {
-								separation.x,
-								separation.y
+
+						// Rigidbody Logic
+						Moveable::CollisionHitY(object.rigidbody);
+
+						Vector::Vector2<float> separation { // Simple normalization
+							(objectCenter.x - point.x) / lengthBetween,
+							(objectCenter.y - point.y) / lengthBetween
+						};
+
+						auto recalculatedPosition = Vector::Addition(
+							proposedPosition, {
+								separation.x * (radius - lengthBetween),
+								separation.y * (radius - lengthBetween)
 							}
 						);
-						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneBoundry.x + radius, sceneBoundry.w - radius);
-						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneBoundry.y + radius, sceneBoundry.h - radius);
+
+						//recalculatedPosition.x = (float)(int)recalculatedPosition.x;
+						//recalculatedPosition.y = (float)(int)recalculatedPosition.y;
+
+						//DEBUG Log::Info("%f, %f", recalculatedPosition.x, recalculatedPosition.y);
+
+						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneGraph.sceneBoundry.x + radius, sceneGraph.sceneBoundry.w - radius);
+						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneGraph.sceneBoundry.y + radius, sceneGraph.sceneBoundry.h - radius);
+
+						//DEBUG Log::Info("END: %f, %f, %f", separation.y * (radius - lengthBetween), recalculatedPosition.x, recalculatedPosition.y);
 					}
 				}
 			}
@@ -583,8 +626,12 @@ namespace Collision {
 			/* Check Circle -> Square is enought becuse we do logic for the other inside.
 				Which means no need to extra enumerate Square -> Circle... */
 
+			//DEBUG Log::Info("CheckCollisionCircleSquare CALL");
+
 			/* Enumerate through Circles */
 			for (size current = 0; current < sceneGraph.circleObjectsCount; current++) {
+
+				//DEBUG Log::Info("CheckCollisionCircleSquare HOW MANY?");
 
 				auto& object = sceneGraph.circleObjects[current];
 				auto& proposedPosition = calculatedCirclePositions[current];
@@ -602,20 +649,21 @@ namespace Collision {
 					const auto& otherBoundry = otherCollision->boundry;
 
 					// 1 Circle - 1 Square CHECK
-					CollisionCircleSquareDynamic(
-						sceneGraph.sceneBoundry, 
-						object.transform.position, proposedPosition, radius, 
-						other.transform.position, otherProposedPosition, otherBoundry
-					);
+					//CollisionCircleSquareDynamic(
+					//	sceneGraph.sceneBoundry, 
+					//	object.transform.position, proposedPosition, radius, 
+					//	other.transform.position, otherProposedPosition, otherBoundry
+					//);
 
 				}
 
+				/* Enumarete through static Squares [ Those don't bounce ] */
 				for (size i = 0; i < sceneGraph.staticCollisionsCount; i++) {
 					auto& collision = sceneGraph.staticCollisions[i];
 
 					CollisionCircleSquareStatic(
-						sceneGraph.sceneBoundry,
-						object.transform.position, proposedPosition, radius,
+						sceneGraph,
+						object, proposedPosition, radius,
 						collision
 					);
 				}

@@ -94,20 +94,36 @@ namespace Game {
 			//const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
 			//const Vector::Vector2<float> mousePositionToWorld{ ((mousePosition.x - cameraMoveToCenter.x) / camera.zoom) - camera.position.x, ((mousePosition.y - cameraMoveToCenter.y) / camera.zoom) - camera.position.y };
 
+			//DEBUG {
+			//	Log::Info("Logic");
+			//	for (size i = 0; i < scene.circleObjectsCount; i++) {
+			//		auto& object = scene.circleObjects[i];
+			//		Log::Info("Object: %f", object.transform.position.y);
+			//	}
+			//}
+
 			/* Calculate their new position. Circle */
 			for (size i = 0; i < scene.circleObjectsCount; i++) {
 				auto& object = scene.circleObjects[i];
 
-				const Vector::Vector2<float> newPosition = object.logic(deltaTime, object, {0, 0}, mouseBitMask, keyboard);
+				// Rigidbody logic
+				Moveable::Accelerate(object.rigidbody, deltaTime);
 
+				const Vector::Vector2<float> newPosition = object.logic(deltaTime, object, {0, 0}, mouseBitMask, keyboard);
+				
 				// OLD RIGIDBODY MOVEMENT need's to pe placed inside object.logic function.
 				//const Vector::Vector2<float> newPosition = object.calculateMove(object.transform, object.rigidbody, deltaTime);
 				calculatedCirclePositions.push_back(newPosition);
+
+				//DEBUG Log::Info("NewPosition: %f", newPosition.y);
 			}
 
 			/* Square */
 			for (size i = 0; i < scene.squareObjectsCount; i++) {
 				auto& object = scene.squareObjects[i];
+
+				// Rigidbody logic
+				Moveable::Accelerate(object.rigidbody, deltaTime);
 
 				const Vector::Vector2<float> newPosition = object.logic(deltaTime, object, { 0, 0 }, mouseBitMask, keyboard);
 
@@ -120,12 +136,21 @@ namespace Game {
 			Collision::Square::CheckCollisionSquare(scene, calculatedSquarePositions, deltaTime);
 			Collision::BetweenTypes::CheckCollisionCircleSquare(scene, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 			Collision::BounceOutsideBoundry(scene, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
+
+			//DEBUG for (size i = 0; i < scene.circleObjectsCount; i++) {
+			//	Log::Info("After: %f", calculatedCirclePositions[i].y);
+			//}
+
 			//Collision::Bounce(sceneGraph, calculatedCirclePositions, calculatedSquarePositions, deltaTime);
 			Camera::MoveByStep(deltaTime, scene.mainCamera, { 0, 0 }, mouseBitMask, keyboard, 4);
 
 			/* Update for new positions. Circle */
 			for (size i = 0; i < scene.circleObjectsCount; i++) {
 				auto& object = scene.circleObjects[i];
+
+				//// Rigidbody logic
+				//Moveable::Accelerate(object.rigidbody, deltaTime);
+
 				object.transform.position.x = calculatedCirclePositions[i].x;
 				object.transform.position.y = calculatedCirclePositions[i].y;
 			}
@@ -133,6 +158,10 @@ namespace Game {
 			/* Update for new positions. Square */
 			for (size i = 0; i < scene.squareObjectsCount; i++) {
 				auto& object = scene.squareObjects[i];
+
+				//// Rigidbody logic
+				//Moveable::Accelerate(object.rigidbody, deltaTime);
+
 				object.transform.position.x = calculatedSquarePositions[i].x;
 				object.transform.position.y = calculatedSquarePositions[i].y;
 			}
@@ -156,19 +185,22 @@ namespace Game {
 			// Gizmos !!!!
 			const Vector::Vector2<float> finishPosiiton { 96 , 96 };
 			Finish::Render(renderer, scene.mainCamera, finishPosiiton);
+
 			const Vector::Vector2<float> gizmoStart { 
-				finishPosiiton.x - scene.mainCamera.position.x,
-				finishPosiiton.y - scene.mainCamera.position.y
+				finishPosiiton.x,
+				finishPosiiton.y
 			};
 
-			const Vector::Vector2<float> gizmoEnd1 { 
-				scene.circleObjects[0].transform.position.x - scene.mainCamera.position.x,
-				scene.circleObjects[0].transform.position.y - scene.mainCamera.position.y
+			const Vector::Vector2<float> gizmoEnd1 {
+				scene.circleObjects[0].transform.position.x,
+				scene.circleObjects[0].transform.position.y
 			};
-			const Vector::Vector2<float> gizmoEnd2{
-				scene.squareObjects[0].transform.position.x - scene.mainCamera.position.x,
-				scene.squareObjects[0].transform.position.y - scene.mainCamera.position.y
+
+			const Vector::Vector2<float> gizmoEnd2 {
+				scene.squareObjects[0].transform.position.x,
+				scene.squareObjects[0].transform.position.y
 			};
+
 
 			scene.gizmoLines.push_back( SceneGraph::Gizmo::Line { 
 				gizmoStart, gizmoEnd1, { 255, 0, 255, 255 }

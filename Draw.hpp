@@ -68,8 +68,19 @@ namespace Draw {
 		const Vector::Vector2<float>& destinPosition, 
 		const Color::Color& color
 	) {
+
+		const Vector::Vector2<float> originPositionCamera {
+				originPosition.x - camera.position.x,
+				originPosition.y - camera.position.y
+		};
+
+		const Vector::Vector2<float> destinPositionCamera {
+				destinPosition.x - camera.position.x,
+				destinPosition.y - camera.position.y
+		};
+
 		SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-		SDL_RenderDrawLine(renderer, (int)(originPosition.x), (int)(originPosition.y), (int)(destinPosition.x), (int)(destinPosition.y));
+		SDL_RenderDrawLine(renderer, (int)(originPositionCamera.x), (int)(originPositionCamera.y), (int)(destinPositionCamera.x), (int)(destinPositionCamera.y));
 	}
 
 };
