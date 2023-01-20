@@ -458,10 +458,14 @@ namespace Collision {
 
 						//DEBUG sceneGraph.gizmoLines.push_back({ position, separation, { 255, 0, 0, 255 } });
 						//DEBUG sceneGraph.gizmoLines.push_back({ Vector::Vector2<float>{ 0, 0 }, position, {255, 0, 0, 255} });
-
 						//DEBUG Log::Info("HERE NOW");
 						//DEBUG Log::Info("old: %f, %f", proposedPosition.x, proposedPosition.y);
 						//DEBUG Log::Info("sep: %f, %f", separation.x, separation.y);
+
+						// Rigidbody Logic
+						Moveable::CollisionHit(object.rigidbody);
+						if (separation.y < -Math::Constants::fepsilon)
+							Moveable::CollisionGroundHit(object.rigidbody);
 
 						auto recalculatedPosition = Vector::Addition(
 							proposedPosition, {
@@ -470,7 +474,7 @@ namespace Collision {
 							}
 						);
 
-						//DEBUG Log::Info("pos: %f, %f", recalculatedPosition.x, recalculatedPosition.y);
+						//DEBUG Log::Info("apos: %f, %f", recalculatedPosition.x, recalculatedPosition.y);
 
 						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneGraph.sceneBoundry.x + radius, sceneGraph.sceneBoundry.w - radius);
 						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneGraph.sceneBoundry.y + radius, sceneGraph.sceneBoundry.h - radius);
@@ -491,18 +495,18 @@ namespace Collision {
 
 					if (Collision::isSeperationOn) {
 
-						// Rigidbody Logic
-						//
-
-						
-
 						Vector::Vector2<float> separation { // Simple normalization
 							(objectCenter.x - point.x) / lengthBetween,
 							(objectCenter.y - point.y) / lengthBetween
 						};
 
+						// Rigidbody Logic
+						Moveable::CollisionHit(object.rigidbody);
 						if (separation.y < -Math::Constants::fepsilon)
-							Moveable::CollisionHitY(object.rigidbody);
+							Moveable::CollisionGroundHit(object.rigidbody);
+
+
+						//DEBUG Log::Info("Stop");
 
 						//Vector::Vector2<float> direction {
 						//	Math::Sign(separation.x),
@@ -521,7 +525,7 @@ namespace Collision {
 						//recalculatedPosition.x = (float)(int)recalculatedPosition.x;
 						//recalculatedPosition.y = (float)(int)recalculatedPosition.y;
 
-						//DEBUG Log::Info("%f, %f", recalculatedPosition.x, recalculatedPosition.y);
+						//DEBUG Log::Info("bpos: %f, %f", recalculatedPosition.x, recalculatedPosition.y);
 
 						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneGraph.sceneBoundry.x + radius, sceneGraph.sceneBoundry.w - radius);
 						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneGraph.sceneBoundry.y + radius, sceneGraph.sceneBoundry.h - radius);

@@ -17,7 +17,7 @@
 
 int SDL_main(int argc, char** argv) {
 
-	DEBUG Log::Info("Running in Debug Mode...");
+	// DEBUG Log::Info("Running in Debug Mode...");
 
 	// Window itself can have it's parameters changed.
 	const array<character, 25> windowTitle { "2DGry-242539-Polecenie-7" };

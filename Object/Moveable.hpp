@@ -9,7 +9,8 @@ namespace Moveable {
 
 	struct Rigidbody {
 		Vector::Vector2<float> velocity;
-		Jumping::OnStopJumping extra = nullptr;
+		Jumping::OnHitJumping extra = nullptr;
+		Jumping::OnHitJumping extra1 = nullptr;
 
 		float personalGravity = Math::Constants::g<float>;
 		float timeAcceleration = 0.0f; // 
@@ -20,9 +21,14 @@ namespace Moveable {
 		rigidbody.timeAcceleration += deltaTime;
 	}
 
-	block CollisionHitY(Rigidbody& rigidbody) {
+	block CollisionHit(Rigidbody& rigidbody) {
 		rigidbody.timeAcceleration = 0.0f;
-		auto callback = (Jumping::OnStopJumping)(rigidbody.extra);
+		auto callback = (Jumping::OnHitJumping)(rigidbody.extra);
+		callback();
+	}
+
+	block CollisionGroundHit(Rigidbody& rigidbody) {
+		auto callback = (Jumping::OnHitJumping)(rigidbody.extra1);
 		callback();
 	}
 

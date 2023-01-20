@@ -31,6 +31,7 @@ namespace GameObjects::Player1 {
 				gProperties.moveAmount = &stepAmount;						// Should be assigned once ! I guess depends ?
 				gProperties.position = &temp;
 				gProperties.velocity = &velocity;
+				gProperties.timeAcceleration = &object.rigidbody.timeAcceleration;
 				onJump(gProperties);
 			}
 
