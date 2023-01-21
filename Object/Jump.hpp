@@ -5,9 +5,9 @@
 
 namespace Jumping {
 
-	const float jumpDistance = 96 + 64; // in tilesize - worldsize
-	const float jumpHeight = 64; // in tilesize - worldsize
-	const float jumpTime = 0.25; // sec
+	float jumpDistance = 96 + 64; // in tilesize - worldsize
+	float jumpHeight = 64; // in tilesize - worldsize
+	float jumpTime = 0.25; // sec
 	const float groundDelay = 1.5f; // sec
 	const float jumpKeyDelay = 0.2f; // sec
 	const float jumpForce = 4;

@@ -11,6 +11,57 @@ namespace GameObjects::Player1 {
 
 	namespace Update {
 
+		block JumpInputProcess(
+			const float& deltaTime,
+			Object::Object& object,
+			const Vector::Vector2<float>& mousePosition,
+			const Uint32& mouseBitMask,
+			const Uint8* const keyboard
+		) {
+			const float step = 1.0f;
+			if (keyboard[SDL_SCANCODE_Z]) {
+				Jumping::jumpDistance -= step;
+				DEBUG {
+					Log::Info("Jump X: %f", Jumping::jumpDistance);
+					Log::Info("Jump Y: %f", Jumping::jumpHeight);
+					Log::Info("Gravity: %f", Jumping::GetJumpGravity());
+					Log::Info("Force X: %f", Jumping::GetJumpXForce());
+					Log::Info("Force Y: %f\n", Jumping::GetJumpYForce());
+					Log::Info("");
+				}
+			} else if (keyboard[SDL_SCANCODE_X]) {
+				Jumping::jumpDistance += step;
+				DEBUG {
+					Log::Info("Jump X: %f", Jumping::jumpDistance);
+					Log::Info("Jump Y: %f", Jumping::jumpHeight);
+					Log::Info("Gravity: %f", Jumping::GetJumpGravity());
+					Log::Info("Force X: %f", Jumping::GetJumpXForce());
+					Log::Info("Force Y: %f\n", Jumping::GetJumpYForce());
+					Log::Info("");
+				}
+			} else if (keyboard[SDL_SCANCODE_C]) {
+				Jumping::jumpHeight -= step;
+				DEBUG {
+					Log::Info("Jump X: %f", Jumping::jumpDistance);
+					Log::Info("Jump Y: %f", Jumping::jumpHeight);
+					Log::Info("Gravity: %f", Jumping::GetJumpGravity());
+					Log::Info("Force X: %f", Jumping::GetJumpXForce());
+					Log::Info("Force Y: %f", Jumping::GetJumpYForce());
+					Log::Info("");
+				}
+			} else if (keyboard[SDL_SCANCODE_V]) {
+				Jumping::jumpHeight += step;
+				DEBUG {
+					Log::Info("Jump X: %f", Jumping::jumpDistance);
+					Log::Info("Jump Y: %f", Jumping::jumpHeight);
+					Log::Info("Gravity: %f", Jumping::GetJumpGravity());
+					Log::Info("Force X: %f", Jumping::GetJumpXForce());
+					Log::Info("Force Y: %f\n", Jumping::GetJumpYForce());
+					Log::Info("");
+				}
+			}
+		}
+
 		Vector::Vector2<float> Logic(
 			const float& deltaTime,
 			Object::Object& object,

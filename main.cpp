@@ -13,14 +13,6 @@
 
 // EXERCISE
 // *Verleta*
-// - Poziom zawiera kilkanaœcie platform na ró¿nych wysokoœciach wzglêdem siebie 
-//    (w tym co najmniej dwie platformy na równej wysokoœci i niedaleko siebie 
-//    do testowania poziomego zasiêgu skoków),
-// - Ca³kowanie równañ ruchu metod¹ Verleta z optymalizacj¹ wskazan¹ na wyk³adzie.
-// - Mo¿liwoœæ ustawiania parametrów skoku : maksymalnej wysokoœci oraz 
-//	  odleg³oœci poziomiej do osi¹gniêcia maksymalnej wysokoœci klawiszami 
-//	  klawiatury podczas dzia³ania programu wyœwietlaj¹c aktualne ich 
-//    wartoœci oraz otrzymane wartoœci v_0 oraz g na konsoli.
 
 // BUGS
 // - collision bug where one can push other through walls...

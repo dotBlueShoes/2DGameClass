@@ -7,6 +7,8 @@
 #include "CollisionLogic.hpp"
 #include "Draw.hpp"
 #include "Log.hpp"
+
+#include "GameObjects/Player1.hpp"
 #include "GameObjects/Finish.hpp"
 
 namespace Game {
@@ -91,6 +93,9 @@ namespace Game {
 			SDL_PumpEvents();
 			mouseBitMask = SDL_GetMouseState(&mousePosition.x, &mousePosition.y);
 			keyboard = SDL_GetKeyboardState(nullptr);
+
+			GameObjects::Player1::Update::JumpInputProcess(deltaTime, scene.circleObjects[0], {0, 0}, mouseBitMask, keyboard);
+
 			//const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
 			//const Vector::Vector2<float> mousePositionToWorld{ ((mousePosition.x - cameraMoveToCenter.x) / camera.zoom) - camera.position.x, ((mousePosition.y - cameraMoveToCenter.y) / camera.zoom) - camera.position.y };
 
