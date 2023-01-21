@@ -435,10 +435,6 @@ namespace Collision {
 
 			const float lengthBetween = (float)Vector::LengthBetween(objectCenter, point);
 
-			//DEBUG Log::Info("SC %f, %f", lengthBetween, radius);
-			//DEBUG Log::Info("%f, %f", objectCenter.y, point.y);
-			//DEBUG sceneGraph.gizmoLines.push_back({ objectCenter, point, { 255, 0, 0, 255 } });
-
 			if (lengthBetween < radius) { // Collision Detected
 
 				if (objectCenter.x == point.x && objectCenter.y == point.y) {
@@ -456,12 +452,6 @@ namespace Collision {
 						top < bottom ? separation.y = -top : separation.y = bottom;
 						abs(separation.x) < abs(separation.y) ? separation.y = 0 : separation.x = 0;
 
-						//DEBUG sceneGraph.gizmoLines.push_back({ position, separation, { 255, 0, 0, 255 } });
-						//DEBUG sceneGraph.gizmoLines.push_back({ Vector::Vector2<float>{ 0, 0 }, position, {255, 0, 0, 255} });
-						//DEBUG Log::Info("HERE NOW");
-						//DEBUG Log::Info("old: %f, %f", proposedPosition.x, proposedPosition.y);
-						//DEBUG Log::Info("sep: %f, %f", separation.x, separation.y);
-
 						// Rigidbody Logic
 						Moveable::CollisionHit(object.rigidbody);
 						if (separation.y < -Math::Constants::fepsilon)
@@ -474,24 +464,11 @@ namespace Collision {
 							}
 						);
 
-						//DEBUG Log::Info("apos: %f, %f", recalculatedPosition.x, recalculatedPosition.y);
-
 						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneGraph.sceneBoundry.x + radius, sceneGraph.sceneBoundry.w - radius);
 						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneGraph.sceneBoundry.y + radius, sceneGraph.sceneBoundry.h - radius);
 					}
 
 				} else {
-
-					//DEBUG sceneGraph.gizmoLines.push_back({ Vector::Vector2<float>{ 0, 0 }, position, {255, 0, 0, 255} });
-					//DEBUG {
-					//	const Vector::Vector2 seppos = Vector::Addition(position, separation);
-						//Log::Info("Separation: %f, %f, Position: %f, %f", separation.x, separation.y, position.x, position.y);
-						//Log::Info("%f, %f", (objectCenter.y - point.y), lengthBetween);
-						//Log::Info("%f", separation.y * (radius - lengthBetween));
-						//Log::Info("Separation: %f, %f, Position: %f, %f", objectCenter.x, objectCenter.y, position.x, position.y);
-						//sceneGraph.gizmoLines.push_back({ objectCenter, point, { 255, 0, 0, 255 } });
-					//}
-					//DEBUG 
 
 					if (Collision::isSeperationOn) {
 
@@ -505,16 +482,6 @@ namespace Collision {
 						if (separation.y < -Math::Constants::fepsilon)
 							Moveable::CollisionGroundHit(object.rigidbody);
 
-
-						//DEBUG Log::Info("Stop");
-
-						//Vector::Vector2<float> direction {
-						//	Math::Sign(separation.x),
-						//	Math::Sign(separation.y)
-						//};
-						//
-						//DEBUG Log::Info("separation: %f, %f", direction.x, direction.y);
-
 						auto recalculatedPosition = Vector::Addition(
 							proposedPosition, {
 								separation.x * (radius - lengthBetween),
@@ -522,15 +489,8 @@ namespace Collision {
 							}
 						);
 
-						//recalculatedPosition.x = (float)(int)recalculatedPosition.x;
-						//recalculatedPosition.y = (float)(int)recalculatedPosition.y;
-
-						//DEBUG Log::Info("bpos: %f, %f", recalculatedPosition.x, recalculatedPosition.y);
-
 						proposedPosition.x = Math::Clamp(recalculatedPosition.x, sceneGraph.sceneBoundry.x + radius, sceneGraph.sceneBoundry.w - radius);
 						proposedPosition.y = Math::Clamp(recalculatedPosition.y, sceneGraph.sceneBoundry.y + radius, sceneGraph.sceneBoundry.h - radius);
-
-						//DEBUG Log::Info("END: %f, %f, %f", separation.y * (radius - lengthBetween), recalculatedPosition.x, recalculatedPosition.y);
 					}
 				}
 			}

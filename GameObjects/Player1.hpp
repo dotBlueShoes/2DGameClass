@@ -23,6 +23,11 @@ namespace GameObjects::Player1 {
 			auto& velocity = object.rigidbody.velocity;
 			velocity.y = Moveable::GetGravityInfluence(object.rigidbody);
 
+			// We're programming collision model with gravity..
+			//  If we look at unity we can tell that their collision logic is connected to gravity.
+			//  What is happening there is that when we COLLIDE on y-axis we lose our y-velocity
+			// - Velocity is something we constantly add to our position. Therefore position on y won't change anymore.
+
 			{
 				using namespace Jumping;
 				gProperties.jumpKey = &keyboard[SDL_SCANCODE_SPACE];		// Should be assigned once !
@@ -34,14 +39,6 @@ namespace GameObjects::Player1 {
 				gProperties.timeAcceleration = &object.rigidbody.timeAcceleration;
 				onJump(gProperties);
 			}
-
-			//DEBUG Log::Info("Velocity: %f,  %f", velocity.x, velocity.y);
-			//DEBUG Log::Info("Position: %f,  %f", temp.x, temp.y);
-
-			// We're programming collision model with gravity..
-			//  If we look at unity we can tell that their collision logic is connected to gravity.
-			//  What is happening there is that when we COLLIDE on y-axis we lose our y-velocity
-			// - Velocity is something we constantly add to our position. Therefore position on y won't change anymore.
 
 			return temp;
 		}

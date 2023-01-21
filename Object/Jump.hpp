@@ -7,9 +7,12 @@ namespace Jumping {
 
 	const float jumpDistance = 96 + 64; // in tilesize - worldsize
 	const float jumpHeight = 64; // in tilesize - worldsize
-	const float jumpTime = 0.5; // sec
-	const float groundDelay = 1; // sec
+	const float jumpTime = 0.25; // sec
+	const float groundDelay = 1.5f; // sec
+	const float jumpKeyDelay = 0.2f; // sec
 	const float jumpForce = 4;
+
+	const float increasetGravity = 1.05f;
 
 	// Following the excercise.
 	//  We're not really making it realistic instead we want a precise control
@@ -17,6 +20,10 @@ namespace Jumping {
 	getter GetJumpGravity() {
 		return (2 * jumpHeight) / (jumpTime * jumpTime);
 	}
+
+	//getter GetDoubleJumpGravity() {
+	//	return (2.25 * jumpHeight) / (jumpTime * jumpTime);
+	//}
 
 	getter GetJumpYForce() {
 		return (-2 * jumpHeight) / jumpTime;
@@ -31,7 +38,7 @@ namespace Jumping {
 		const Uint8* moveLeftKey;
 		const Uint8* moveRightKey;
 		const float* moveAmount;
-		float groundDelay;
+		float groundDelay = 0;
 		Vector::Vector2<float> preJumpPosition;
 		Vector::Vector2<float>* position;
 		Vector::Vector2<float>* velocity;
@@ -45,11 +52,28 @@ namespace Jumping {
 	void Default(JumpingProperties&);
 	void Jump(JumpingProperties&);
 	void JumpUp(JumpingProperties&);
+	void DoubleJump(JumpingProperties&);
+	void DoubleJumpUp(JumpingProperties&);
+	void FasterFallingXY(JumpingProperties&);
+	void FasterFallingY(JumpingProperties&);
 
 	OnJumping onJump = Default;
 
-	void Default(JumpingProperties& properties) {
+	//void FallFasterXY(JumpingProperties& properties) {
+	//	// I we're above halfway we're falling.
+	//	if (*properties.timeAcceleration > jumpTime) {
+	//		onJump = FasterFallingXY;
+	//	}
+	//}
+	//
+	//void FallFasterY(JumpingProperties& properties) {
+	//	// I we're above halfway we're falling.
+	//	if (*properties.timeAcceleration > jumpTime) {
+	//		onJump = FasterFallingY;
+	//	}
+	//}
 
+	void Default(JumpingProperties& properties) {
 		// Only when we're not jumping we can move. therefore...
 		if (*properties.moveRightKey) (*properties.position).x += *properties.moveAmount;
 		if (*properties.moveLeftKey) (*properties.position).x -= *properties.moveAmount;
@@ -61,9 +85,6 @@ namespace Jumping {
 
 		//if (properties.groundDelay < groundDelay) { // TO MAKE IT IMPOSSIBLE TO JUMP MID_AIR
 			if (*properties.jumpKey) {
-
-				//DEBUG Log::Info("here");
-
 				*properties.timeAcceleration = 0;
 				properties.preJumpPosition.y = (*properties.position).y;
 				properties.preJumpPosition.x = (*properties.position).x;
@@ -97,24 +118,109 @@ namespace Jumping {
 	}
 
 	void JumpUp(JumpingProperties& properties) {
-		// Y-AXIS
-		(*properties.position).y =
+		// Double Jump Logic.
+		if (*properties.jumpKey) {
+			auto& delay = *properties.timeAcceleration;
+			if (delay > jumpKeyDelay) {
+				*properties.timeAcceleration = 0;
+				properties.preJumpPosition.y = (*properties.position).y;
+				properties.preJumpPosition.x = (*properties.position).x;
+				onJump = DoubleJumpUp;
+				onJump(properties);
+				return;
+			}
+		}
+
+		// Falling Faster implementation.
+		if (*properties.timeAcceleration < jumpTime) {
+			(*properties.position).y = // Y-AXIS
+				(0.5f * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		} else {
+			(*properties.position).y = // Y-AXIS
+				(0.5f * increasetGravity * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		}
+	}
+
+	void DoubleJumpUp(JumpingProperties& properties) {
+		// Falling Faster implementation.
+		if (*properties.timeAcceleration < jumpTime) {
+			(*properties.position).y = // Y-AXIS
+				(0.5f * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		} else {
+			(*properties.position).y = // Y-AXIS
+				(0.5f * increasetGravity * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		}
+	}
+
+	void Jump(JumpingProperties& properties) {
+		// Double Jump Logic.
+		if (*properties.jumpKey) {
+			auto& delay = *properties.timeAcceleration;
+			if (delay > jumpKeyDelay) {
+				*properties.timeAcceleration = 0;
+				properties.preJumpPosition.y = (*properties.position).y;
+				properties.preJumpPosition.x = (*properties.position).x;
+				onJump = DoubleJump;
+				onJump(properties);
+				return;
+			}
+		}
+
+		// Falling Faster implementation.
+		if (*properties.timeAcceleration < jumpTime) {
+			(*properties.position).x = // X-AXIS
+				(GetJumpXForce() * properties.jumpDirection * (*properties.timeAcceleration)) +
+				properties.preJumpPosition.x;
+			(*properties.position).y = // Y-AXIS
+				(0.5f * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		} else {
+			(*properties.position).x = // X-AXIS
+				(GetJumpXForce() * properties.jumpDirection * (*properties.timeAcceleration)) +
+				properties.preJumpPosition.x;
+			(*properties.position).y = // Y-AXIS
+				(0.5f * increasetGravity * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		}
+		
+	}
+
+	void DoubleJump(JumpingProperties& properties) {
+		// Falling Faster implementation.
+		if (*properties.timeAcceleration < jumpTime) {
+			(*properties.position).x = // X-AXIS
+				(GetJumpXForce() * properties.jumpDirection * (*properties.timeAcceleration)) +
+				properties.preJumpPosition.x;
+			(*properties.position).y = // Y-AXIS
+				(0.5f * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		} else {
+			(*properties.position).x = // X-AXIS
+				(GetJumpXForce() * properties.jumpDirection * (*properties.timeAcceleration)) +
+				properties.preJumpPosition.x;
+			(*properties.position).y = // Y-AXIS
+				(0.5f * increasetGravity * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
+				(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
+		}
+		
+	}
+
+	void FasterFallingXY(JumpingProperties& properties) {
+		(*properties.position).x = // X-AXIS
+			(GetJumpXForce() * properties.jumpDirection * (*properties.timeAcceleration)) +
+			properties.preJumpPosition.x;
+		(*properties.position).y = // Y-AXIS
 			(0.5 * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
 			(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
 	}
 
-	void Jump(JumpingProperties& properties) {
-		// If i would be expecting another jump i would place an if statement here
-		// eg double jump. However there should be a input time delay logic as of this.
-
-		// X-AXIS
-		(*properties.position).x = 
-			(GetJumpXForce() * properties.jumpDirection * (*properties.timeAcceleration)) + 
-			properties.preJumpPosition.x;
-
-		// Y-AXIS
-		(*properties.position).y = 
-			(0.5 * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) + 
+	void FasterFallingY(JumpingProperties& properties) {
+		(*properties.position).y = // Y-AXIS
+			(0.5 * GetJumpGravity() * (*properties.timeAcceleration) * (*properties.timeAcceleration)) +
 			(GetJumpYForce() * (*properties.timeAcceleration)) + properties.preJumpPosition.y;
 	}
 
