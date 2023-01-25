@@ -95,6 +95,7 @@ namespace Game {
 			keyboard = SDL_GetKeyboardState(nullptr);
 
 			GameObjects::Player1::Update::JumpInputProcess(deltaTime, scene.circleObjects[0], {0, 0}, mouseBitMask, keyboard);
+			GameObjects::MazeMap::Update(deltaTime, scene.circleObjects[0], { 0, 0 }, mouseBitMask, keyboard);
 
 			//const Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
 			//const Vector::Vector2<float> mousePositionToWorld{ ((mousePosition.x - cameraMoveToCenter.x) / camera.zoom) - camera.position.x, ((mousePosition.y - cameraMoveToCenter.y) / camera.zoom) - camera.position.y };
@@ -185,7 +186,26 @@ namespace Game {
 		) {
 			Draw::Background(renderer, *scene.backgroundColor);
 
-			GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.map);
+			//GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.maps[3], 1.25f);
+			
+			//DEBUG Log::Info("mapx: %d, mapy: %d", scene.maps[2].extent.x * 32, scene.maps[2].extent.y * 32);
+			////DEBUG Log::Info("camvx: %d, camvy: %d", scene.mainCamera.viewport.x, scene.mainCamera.viewport.y);
+			//DEBUG Log::Info("campx: %f, campy: %f", scene.mainCamera.position.x, scene.mainCamera.position.y);
+			//
+			//if (scene.mainCamera.position.x < scene.maps[2].position.x) {
+			//	// We're to the left of it.
+			//	DEBUG Log::Info("Left Side");
+			//}
+			//
+			//if (scene.mainCamera.position.x + scene.mainCamera.viewport.x > scene.maps[2].extent.x * 32) {
+			//	// We're to the right of it.
+			//	DEBUG Log::Info("Right Side");
+			//}
+
+			GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.maps[1], GameObjects::MazeMap::background1speed);
+			GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.maps[3], GameObjects::MazeMap::background2speed);
+			GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.maps[2], GameObjects::MazeMap::background3speed);
+			GameObjects::MazeMap::Render(renderer, scene.mainCamera, scene.maps[0]);
 			
 			// Gizmos !!!!
 			const Vector::Vector2<float> finishPosiiton { 96 , 96 };

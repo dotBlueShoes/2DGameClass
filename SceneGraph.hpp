@@ -25,7 +25,8 @@ namespace SceneGraph {
 		size squareObjectsCount;
 		Object::Object* squareObjects;
 		Rectangle sceneBoundry;
-		GameObjects::MazeMap::Map map;
+		size mapsCount;
+		GameObjects::MazeMap::Map* maps;
 		size staticCollisionsCount;
 		Rectangle* staticCollisions;
 		size triggersCount;
@@ -45,7 +46,7 @@ namespace SceneGraph {
 
 		for (size i = 0; i < currentScene->circleObjectsCount; i++) {
 			currentScene->circleObjects->transform.position = Spawn::GetRandomValidPosition(
-				currentScene->map, currentScene->staticCollisionsCount, currentScene->staticCollisions
+				currentScene->maps[0], currentScene->staticCollisionsCount, currentScene->staticCollisions
 			);
 		}
 

@@ -12,6 +12,10 @@ namespace GameObjects::MazeMap {
 	//	'\n'
 	//};
 
+	float background1speed = 1.25f;
+	float background2speed = 1.18f;
+	float background3speed = 1.10f;
+
 	struct Sprite {
 		Rectangle spriteTransform;
 	};
@@ -118,12 +122,15 @@ namespace GameObjects::MazeMap {
 		while (buffor[inputIndex] != '\0') {
 			for (; buffor[inputIndex] != '\n'; inputIndex++) {
 				switch (buffor[inputIndex]) {
-					case '0': { board[mapIndex] = 0; break; }
+					case '0': { break; }
 					case '1': { board[mapIndex] = 1; break; }
 					case '2': { board[mapIndex] = 2; break; }
 					case '3': { board[mapIndex] = 3; break; }
+					case '4': { board[mapIndex] = 4; break; }
+					case '5': { board[mapIndex] = 5; break; }
+					case '6': { board[mapIndex] = 6; break; }
 					default: { 
-						board[mapIndex] = 0; 
+						//board[mapIndex] = 0; 
 						DEBUG Log::Error("Map Load Error: %i, %d", inputIndex, buffor[inputIndex]);
 					}
 				}
@@ -134,7 +141,29 @@ namespace GameObjects::MazeMap {
 
 		DEBUG Log::Info("InputIndex %d, MapIndex %d, RowSize, %d", inputIndex, mapIndex, rowSize);
 
-		return Map { { 0, 0 }, textureAtlas, extent, board };
+		return Map { position, textureAtlas, extent, board };
+	}
+
+	block Update(
+		const float& deltaTime,
+		Object::Object& object,
+		const Vector::Vector2<float>& mousePosition,
+		const Uint32& mouseBitMask,
+		const Uint8* const keyboard
+	) {
+		if (keyboard[SDL_SCANCODE_1]) {
+			background1speed += 0.02;
+		} else if (keyboard[SDL_SCANCODE_2]) {
+			background1speed -= 0.02;
+		} else if (keyboard[SDL_SCANCODE_3]) {
+			background2speed += 0.02;
+		} else if (keyboard[SDL_SCANCODE_4]) {
+			background2speed -= 0.02;
+		} else if (keyboard[SDL_SCANCODE_5]) {
+			background3speed += 0.02;
+		} else if (keyboard[SDL_SCANCODE_6]) {
+			background3speed -= 0.02;
+		}
 	}
 
 	block Render(const Renderer& renderer, const Camera::Camera& camera, const Map& map) {
@@ -153,6 +182,32 @@ namespace GameObjects::MazeMap {
 				SDL_RenderCopy (
 					renderer, 
 					map.textureAtlas.texture, 
+					&map.textureAtlas.sprites[map.board[x + (y * map.extent.x)]].spriteTransform,
+					&tileRenderScreenPosition
+				);
+				tileRenderScreenPosition.x += tileRenderScreenPosition.w;
+			}
+			tileRenderScreenPosition.x = startPosition.x;
+			tileRenderScreenPosition.y += tileRenderScreenPosition.h;
+		}
+	}
+
+	block Render(const Renderer& renderer, const Camera::Camera& camera, const Map& map, const float& speed) {
+		//const Vector::Vector2<float> cameraMoveToCenter = Camera::GetCameraScaleMovePosition(camera);
+		//const Vector::Vector2<float> startPosition{ ceil((position.x + camera.position.x) * camera.zoom + cameraMoveToCenter.x), ceil((position.y + camera.position.y) * camera.zoom + cameraMoveToCenter.y) };
+		//printf("map: %f, %f\n", startPosition.x, startPosition.y);
+
+		const Vector::Vector2<float> startPosition { ceil(map.position.x - (camera.position.x * speed)), ceil(map.position.y - camera.position.y) };
+		Rectangle tileRenderScreenPosition; // = { 0, 0, map.textureAtlas.tileSize, map.textureAtlas.tileSize };
+		tileRenderScreenPosition.x = startPosition.x;
+		tileRenderScreenPosition.y = startPosition.y;
+		tileRenderScreenPosition.w = ceil(map.textureAtlas.tileSize);
+		tileRenderScreenPosition.h = ceil(map.textureAtlas.tileSize);
+		for (int y = 0; y < map.extent.y; y++) {
+			for (int x = 0; x < map.extent.x; x++) {
+				SDL_RenderCopy(
+					renderer,
+					map.textureAtlas.texture,
 					&map.textureAtlas.sprites[map.board[x + (y * map.extent.x)]].spriteTransform,
 					&tileRenderScreenPosition
 				);

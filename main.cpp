@@ -23,7 +23,7 @@ int SDL_main(int argc, char** argv) {
 	// DEBUG Log::Info("Running in Debug Mode...");
 
 	// Window itself can have it's parameters changed.
-	const array<character, 25> windowTitle { "2DGry-242539-Polecenie-7" };
+	const array<character, 25> windowTitle { "2DGry-242539-Polecenie-9" };
 	const Vector::Vector2<uint32> sceneViewport { 1280 , 720 };
 	Window::WindowStruct windowStruct { sceneViewport, windowTitle.size(), windowTitle.data(), { 23, 23, 23, 255 } };
 
@@ -41,9 +41,14 @@ int SDL_main(int argc, char** argv) {
 		const int tileSize = 32;
 		GameObjects::MazeMap::TextureAtlas textureAtlas(GameObjects::MazeMap::CreateTextureAtlas(mainRenderer, 8, tileSize, "assets/tilemap.png"));
 		GameObjects::MazeMap::Map sidescrollerMap(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/sidescroller.map", { 94, 12 }));
+		GameObjects::MazeMap::Map background1(GameObjects::MazeMap::CreateMapFromFile({ -(float)sceneViewport.x, 0.0f }, textureAtlas, "assets/maps/background1.map", { 94 * 2, 12 }));
+		GameObjects::MazeMap::Map background2(GameObjects::MazeMap::CreateMapFromFile({ -(float)sceneViewport.x, 0.0f }, textureAtlas, "assets/maps/background2.map", { 94 * 2, 23 }));
+		GameObjects::MazeMap::Map background3(GameObjects::MazeMap::CreateMapFromFile({ -(float)sceneViewport.x, 0.0f }, textureAtlas, "assets/maps/background3.map", { 94 * 2, 12 }));
 		//GameObjects::MazeMap::Map map1(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/1.map", { 78, 45 } ));
 		//GameObjects::MazeMap::Map map2(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/2.map", { 60, 36 } ));
 		//GameObjects::MazeMap::Map map3(GameObjects::MazeMap::CreateMapFromFile({ 0.0f, 0.0f }, textureAtlas, "assets/maps/3.map", { 86, 39 } ));
+
+		array<GameObjects::MazeMap::Map, 4> maps { sidescrollerMap, background1, background2, background3 };
 
 		// Collisions
 		auto collisions = CreateCollisionsSidescrollerMap(tileSize);
@@ -117,7 +122,8 @@ int SDL_main(int argc, char** argv) {
 			player2s.size(),
 			player2s.data(),
 			{ 0, 0, (int)sceneViewport.x * 3, (int)sceneViewport.y * 3 }, // outside_collider
-			sidescrollerMap,
+			maps.size(),
+			maps.data(),
 			collisions.size(),
 			collisions.data()
 		};
@@ -128,8 +134,9 @@ int SDL_main(int argc, char** argv) {
 		Game::Destroy(mainWindow, mainRenderer);
 
 		
-		GameObjects::MazeMap::DestroyMap(scene1.map);
-		GameObjects::MazeMap::DestroyTextureAtlas(scene1.map.textureAtlas);
+		GameObjects::MazeMap::DestroyMap(sidescrollerMap);
+		GameObjects::MazeMap::DestroyMap(background1);
+		GameObjects::MazeMap::DestroyTextureAtlas(textureAtlas);
 	}
 
 	return 0;

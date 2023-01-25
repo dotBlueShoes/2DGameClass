@@ -102,5 +102,8 @@
   <ItemGroup>
     <None Include="assets\maps\small.map" />
     <None Include="assets\maps\3.map" />
+    <None Include="assets\maps\background1.map" />
+    <None Include="assets\maps\background2.map" />
+    <None Include="assets\maps\background3.map" />
   </ItemGroup>
 </Project>
