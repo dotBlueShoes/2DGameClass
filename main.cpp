@@ -27,7 +27,7 @@ int SDL_main(int argc, char** argv) {
 	Surface::Square squareSurface1 { 60, 60 };
 
 	// Prefabs
-	const Entity::PlayerCircle prefabPlayerCircle { Transform::zero, circleSurface1, { 30 }, { Moveable::GetRandomAngleForce(80.0f) } };
+	prefab Entity::PlayerCircle prefabPlayerCircle { Transform::zero, circleSurface1, { 30 }, { Moveable::GetRandomAngleForce(80.0f) } };
 	// - we know 1 st element is ( Transform::Transform Surface::Circle Collision::CircleCollision Moveable::MoveData )
 	const Entity::PlayerSquare prefabPlayerSquare { Transform::zero, squareSurface1, { 60, 60 }, { Moveable::GetRandomAngleForce(80.0f) } };
 	// - we know 2 st element is ( Transform::Transform Surface::Square Collision::SquareCollision Moveable::MoveData )

@@ -12,9 +12,10 @@
 #include <vector>
 
 // QUICK DEBUG
-//#include <iostream>
+#include <iostream>
 //#include <fstream>
 
+#define prefab const
 #define block inline void
 #define getter [[nodiscard]] constexpr auto
 

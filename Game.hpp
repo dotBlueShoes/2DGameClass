@@ -9,6 +9,10 @@
 #include "Log.hpp"
 #include "Math/Math.hpp"
 
+#include "Entities/EntityPlayerCircle.hpp"
+#include "Entities/EntityPlayerSquare.hpp"
+#include "Systems/Move.hpp"
+
 namespace Game {
 
 	void CollideCircle(
@@ -343,6 +347,9 @@ namespace Game {
 
 	namespace Update {
 
+		array<Entity::Range, 1> ranges { { 0, 3 } };
+		char debug[256] = "\0";
+
 		block Logic() {
 
 		}
@@ -355,9 +362,26 @@ namespace Game {
 		) {
 			Draw::Background(renderer, backgroundColor);
 
+			Entity::ForEach<Transform::Transform, Moveable::MoveData>(entitiesBuffor, ranges.data(), ranges.size(), Move::CalculateMove);
+
 			//for (size i = 0; i < entitiesLength; i++) {
-			//
+			//	//debug[i * 3] = i + '0'; // 1, 2
+			//	//debug[i * 3 + 1] = ',';
+			//	//debug[i * 3 + 2] = ' ';
+			//	//auto&& circle = (Entity::PlayerCircle*)(entitiesBuffor[0]);
+			//	//auto&& square = (Entity::PlayerSquare*)(entitiesBuffor[1]);
+			//	//auto&& other = (Entity::EntitiesBuffor*)(entitiesBuffor[2]);
+			//	//auto&& otherCircle = (Entity::PlayerCircle*)(other[0]);
+			//	//std::cout <<
+			//	//	circle->surface.radius << ", " <<
+			//	//	square->surface.size.x << ", " <<
+			//	//	otherCircle->surface.radius << std::endl;
+			//	
+			//	
 			//}
+
+			//debug[entitiesLength * 3 - 2] = '\n';
+			//printf("%*.*s", entitiesLength * 3 - 1, entitiesLength * 3 - 1, debug);
 
 			SDL_RenderPresent(renderer);
 		}
