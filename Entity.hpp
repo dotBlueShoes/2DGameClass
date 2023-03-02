@@ -7,6 +7,8 @@
 namespace Entity {
 
 	using Component = any;
+	using Components = Component*;
+
 	using Entity = any;
 	using Entities = Entity*;
 	using EntitiesBuffor = Entities;
@@ -45,6 +47,73 @@ namespace Entity {
 			buffor[offset + i] = &entity;
 		}
 	}
+
+	// CreateEntitiesMOV
+
+	// 2023-03-02 STARTS
+	
+	// - czy mo¿na zdeklarowaæ rozmiar bufora dla range'u dla komponentu przed ich utwprzeniem?
+	// TABLICA RANGEÓW MO¯E BYÆ OKREŒLONA ROZMIAREM PRZED ! operujemy na ³¹cznej iloœci danego komponentu z pomoc¹ offset i size range'a.
+
+	// - Jak tworzyæ range'e
+	// : z ifem
+	// : bez if'a
+
+	// #1
+	// - 0->0 means: none, 
+	// - 0->5 and entitiesCount = 5 means: change range to [ 0 -> 5 + count ],
+	// - 0->5 and entitiesCount = 10 means: add range [ 10 -> count ]
+	// : range.offset + range.size !> entitiesCount !!! To zgodnie z implementacj¹ nie powinno nigdy zajœæ.
+
+	//using ComponentsBuffor = Components;
+
+	struct ComponentsBuffor {
+		Components components;
+		Ranges ranges;
+		size rangesCount;
+	};
+
+	struct SampleEntityComponentREF {
+		ComponentsBuffor* transforms;
+		ComponentsBuffor* rigidBodys;
+		ComponentsBuffor* surfaces;
+	};
+
+	template <class T>
+	block CreateEntitiesCPYA(
+		const T& entity,					// prefab like entity that will be copied onto components buffors
+		const size& count,					// number of copies
+		/*out*/ SampleEntityComponentREF& componentBuffors,
+		// /*out*/ ComponentsBuffor& buffor1,	// component buffor [Transform]. + Information about ranges #1
+		// /*out*/ ComponentsBuffor& buffor2,  // component buffor [RigidBody]
+		// /*out*/ ComponentsBuffor& buffor3,  // component buffor [Surface]
+		/*out*/ size& entitiesCount			// amount of all entities.
+	) {
+
+	}
+
+	// This leads us to.
+	// 1. FOREACH would perform per component buffor therefore there is no if statement other then the one in loop
+	//  that goes through ranges.
+	// 2. Each Coponent has it's own buffor and ranges - an array that has a size that has to be set.
+	// 3. PROBLEM WITH component size and range 
+	//  If we would have 3000 entities where 
+	//   - first 30 have both Transform and Ridigbody
+	//   - next 1485 only Transform
+	//   - next 1485 have only Ridigbody
+	//  Then the algorith would go thought 1st range sucesfully and then will be going though the rest counting every next offset and size till entityCount
+	//   but knowing that a pair of these components can be found only in first 30 elements would fasten the algorithm.
+	//   Therefore:
+	//    a) an if statement that would check whether 
+	//	  b) another method-system to operate on ranges of pairs of components that would become availible through sorting.
+	//  Transform -> [00001111111111111111111]
+	//  RigidBody -> [00002222222222222222222]
+
+	// PYTANIE KOÑCOWE CZY SORTOWANIE MA ZNACZENIE
+	//  bo to sortowanie jest istot¹ range'ów
+	//  range'e s³u¿¹ do zooptymalizowania przemieszczania siê po bufforach.
+
+	// ##### 2023-03-02 ENDS 
 
 	//block DeleteEntities(/*out*/ EntitiesBuffor& buffor, const size& length, const size& offset = 0) {
 	//	for (size i = 0; i < length; i++) {
