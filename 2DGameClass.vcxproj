@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClInclude Include="Entities\EntityPlayerCircle.hpp" />
     <ClInclude Include="Entities\EntityPlayerSquare.hpp" />
-    <ClInclude Include="Components\Movable.hpp" />
+    <ClInclude Include="Components\Rigidbody.hpp" />
     <ClInclude Include="Camera.hpp" />
     <ClInclude Include="Math\Color.hpp" />
     <ClInclude Include="Draw.hpp" />

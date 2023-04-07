@@ -4,7 +4,7 @@
 #include "../Math/Math.hpp"
 
 #include "../Components/Transform.hpp"
-#include "../Components/Movable.hpp"
+#include "../Components/RigidBody.hpp"
 
 namespace Move {
 
@@ -20,7 +20,7 @@ namespace Move {
 	//template <class ... Ts>
 	void CalculateMove (
 		Transform::Transform transform,
-		Moveable::MoveData moveData
+		RigidBody::RigidBody rigidBody
 	) {
 		std::cout << "hello" << std::endl;
 	}

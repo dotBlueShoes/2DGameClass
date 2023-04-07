@@ -13,6 +13,12 @@ namespace Entity {
 	using Entities = Entity*;
 	using EntitiesBuffor = Entities;
 
+	struct Range {
+		size offset, value;
+	};
+
+	using Ranges = Range*;
+
 	//namespace Map {
 	//	size currentOffset = 0;
 	//}
@@ -73,23 +79,60 @@ namespace Entity {
 		size rangesCount;
 	};
 
+	// thats kinda stupid... why am i creating an a array of pointers ?? why not an array of that datatype ??
+	getter CreateComponentsBuffor(const size& length, const size& rangesCount) {
+		return ComponentsBuffor { new Component[length + 1], new Range[rangesCount], rangesCount };
+	}
+
+	block DeleteComponentsBuffor(/*out*/ ComponentsBuffor& buffor) {
+		//DeleteEntities(buffor, bufforLength);
+		// TODO delete[][] ?
+		delete[] buffor.components;
+		delete[] buffor.ranges;
+	}
+
 	struct SampleEntityComponentREF {
 		ComponentsBuffor* transforms;
 		ComponentsBuffor* rigidBodys;
 		ComponentsBuffor* surfaces;
 	};
 
+	template <class EntityType, class CompoenentType>
+	block CreateEntitiesComponentCPY(
+		/*out*/ ComponentsBuffor& buffor,
+		/*in*/	const EntityType& entity,
+		/*in*/  const size& componentOffset,
+		/*in*/	const size& count,
+		/*out*/ size& entitiesCount
+	) {
+	
+	}
+
 	template <class T>
 	block CreateEntitiesCPYA(
+		// /*out*/ SampleEntityComponentREF& componentBuffors,
+		/*out*/ ComponentsBuffor& buffor1,	// component buffor [Transform]. + Information about ranges #1
+		/*out*/ ComponentsBuffor& buffor2,  // component buffor [RigidBody]
+		/*out*/ ComponentsBuffor& buffor3,  // component buffor [Surface]
 		const T& entity,					// prefab like entity that will be copied onto components buffors
 		const size& count,					// number of copies
-		/*out*/ SampleEntityComponentREF& componentBuffors,
-		// /*out*/ ComponentsBuffor& buffor1,	// component buffor [Transform]. + Information about ranges #1
-		// /*out*/ ComponentsBuffor& buffor2,  // component buffor [RigidBody]
-		// /*out*/ ComponentsBuffor& buffor3,  // component buffor [Surface]
 		/*out*/ size& entitiesCount			// amount of all entities.
 	) {
 
+
+		if (buffor1.rangesCount == 0 ||
+			buffor2.rangesCount == 0 ||
+			buffor3.rangesCount == 0) {
+			return;
+		}
+
+		//if (buffor1.ranges[0].value == 0)
+		//	for (size i = 0; i < count; i++)
+		//		buffor1.components[i] = ?????? initialize ?????? entity.component1Data
+
+		//for (size i = 0; i < buffor1.rangesCount; i++) {
+		//
+		//}
 	}
 
 	// This leads us to.
@@ -143,12 +186,6 @@ namespace Entity {
 	// Ranges specify the entities in entity lists that have required components.
 	//  because components can be only added at creation.
 	//  therefore thier position in buffors in known.
-
-	struct Range {
-		size offset, value;
-	};
-
-	using Ranges = Range*;
 
 	//struct System {
 	//	Entities entities;

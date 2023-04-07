@@ -4,6 +4,8 @@
 
 namespace Transform {
 
+	constexpr size TransformID = 1;
+
 	namespace Position {
 		const Vector::Vector2<float> zero { 0, 0 };
 		const Vector::Vector2<float> center { 920 / 2 , 360 / 2 };

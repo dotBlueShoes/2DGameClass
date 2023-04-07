@@ -3,7 +3,7 @@
 #include "../Entity.hpp"
 #include "../Components/Transform.hpp"
 #include "../Components/Collision.hpp"
-#include "../Components/Movable.hpp"
+#include "../Components/RigidBody.hpp"
 #include "../Components/Surface.hpp"
 
 namespace Entity {
@@ -11,8 +11,8 @@ namespace Entity {
 	struct PlayerSquare {
 		Transform::Transform transform;
 		Surface::Square surface;
-		Collision::SquareCollision collision;
-		Moveable::MoveData moveData;
+		Collision::Square collision;
+		RigidBody::RigidBody rigidBody;
 	};
 
 }

@@ -10,11 +10,11 @@ namespace Collision {
 	bool isSeperationOn(true);
 	bool isReflectionOn(true);
 
-	struct CircleCollision {
+	struct Circle {
 		float radius;
 	};
 
-	struct SquareCollision {
+	struct Square {
 		Rectangle boundry;
 	};
 

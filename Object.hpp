@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework.hpp"
 #include "Components/Transform.hpp"
-#include "Components/Movable.hpp"
+#include "Components/RigidBody.hpp"
 #include "Math/Math.hpp"
 #include "Components/Collision.hpp"
 #include "Components/Surface.hpp"
@@ -10,7 +10,7 @@ namespace Object {
 
 	namespace Callback {
 		using Draw = void (*)(const Renderer&, const Vector::Vector2<float>&, void*, const Color::Color&);
-		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const Moveable::MoveData& moveData, const float& deltaTime);
+		using CalculateMove = const Vector::Vector2<float>(*)(const Transform::Transform& transform, const RigidBody::RigidBody& rigidBody, const float& deltaTime);
 	}
 	
 	const uint64 typeRange = 100000;
@@ -33,9 +33,9 @@ namespace Object {
 		Surface::Surface surface;
 		Color::Color color;
 		Callback::Draw draw;
-		Moveable::MoveData moveData;
+		RigidBody::RigidBody rigidBody;
 		Callback::CalculateMove calculateMove;
-		Collision::SquareCollision collision;
+		Collision::Square collision;
 	};
 
 	//block Draw(

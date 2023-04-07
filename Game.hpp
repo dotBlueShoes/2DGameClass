@@ -31,10 +31,10 @@ namespace Game {
 		// COLLISION [ IN BOUNDRY CHECKS ]
 		const Rectangle boundry{ 0, 0, 920, 360 }; // It will be outside later
 		if (calculatedPosition.x < boundry.x + radius || calculatedPosition.x > boundry.w - radius)		// If we're outside X boundry.
-			object.moveData.velocity.x *= -1;
+			object.rigidBody.velocity.x *= -1;
 
 		if (calculatedPosition.y < boundry.y + radius || calculatedPosition.y > boundry.h - radius)		// If we're outside Y boundry.
-			object.moveData.velocity.y *= -1;
+			object.rigidBody.velocity.y *= -1;
 
 		if (calculatedPosition.x > boundry.x + radius && calculatedPosition.y > boundry.y + radius &&	// If we're in boundry.
 			calculatedPosition.x < boundry.w - radius && calculatedPosition.y < boundry.h - radius
@@ -80,11 +80,11 @@ namespace Game {
 							}
 
 							if (Collision::isReflectionOn) {
-								const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.moveData.velocity, separation) * 2.0f);
-								object.moveData.velocity = Vector::Subtract(object.moveData.velocity, offset1);
+								const auto offset1 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(object.rigidBody.velocity, separation) * 2.0f);
+								object.rigidBody.velocity = Vector::Subtract(object.rigidBody.velocity, offset1);
 								separation = Vector::Vector2<float>{ separation.x * -1.0f, separation.y * -1.0f };
-								const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.moveData.velocity, separation) * 2.0f);
-								other.moveData.velocity = Vector::Subtract(other.moveData.velocity, offset2);
+								const auto offset2 = Vector::MultiplyByScalar(separation, (float)Vector::DotProduct(other.rigidBody.velocity, separation) * 2.0f);
+								other.rigidBody.velocity = Vector::Subtract(other.rigidBody.velocity, offset2);
 							}
 						}
 					} 
@@ -111,10 +111,10 @@ namespace Game {
 		// COLLISION [ IN BOUNDRY CHECKS ]
 		const Rectangle boundry{ 0, 0, 920, 360 }; // It will be outside later
 		if (calculatedPosition.x < boundry.x + area.x / 2 || calculatedPosition.x > boundry.w - area.x / 2)		// If we're outside X boundry.
-			object.moveData.velocity.x *= -1;
+			object.rigidBody.velocity.x *= -1;
 
 		if (calculatedPosition.y < boundry.y + area.y / 2 || calculatedPosition.y > boundry.h - area.y / 2)		// If we're outside Y boundry.
-			object.moveData.velocity.y *= -1;
+			object.rigidBody.velocity.y *= -1;
 
 		if (calculatedPosition.x > boundry.x + area.x / 2 && calculatedPosition.y > boundry.y + area.y / 2 &&	// If we're in boundry.
 			calculatedPosition.x < boundry.w - area.x / 2 && calculatedPosition.y < boundry.h - area.y / 2
@@ -169,15 +169,15 @@ namespace Game {
 							// Mówimy obiektowi ¿eby porusza³ siê teraz w innym torze.
 							if (Collision::isReflectionOn) {
 								if (separation.x == 0) {
-									object.moveData.velocity.x *= 1;
-									other.moveData.velocity.x *= 1;
-									object.moveData.velocity.y *= -1;
-									other.moveData.velocity.y *= -1;
+									object.rigidBody.velocity.x *= 1;
+									other.rigidBody.velocity.x *= 1;
+									object.rigidBody.velocity.y *= -1;
+									other.rigidBody.velocity.y *= -1;
 								} else {
-									object.moveData.velocity.x *= -1;
-									other.moveData.velocity.x *= -1;
-									object.moveData.velocity.y *= 1;
-									other.moveData.velocity.y *= 1;
+									object.rigidBody.velocity.x *= -1;
+									other.rigidBody.velocity.x *= -1;
+									object.rigidBody.velocity.y *= 1;
+									other.rigidBody.velocity.y *= 1;
 								}
 							}
 						}
@@ -290,7 +290,7 @@ namespace Game {
 		// Calculate their new position.
 		for (size i = 0; i < objectsCount; i++) {
 			auto& object = objects[i];
-			const Vector::Vector2 temp = object.calculateMove(object.transform, object.moveData, deltaTime);
+			const Vector::Vector2 temp = object.calculateMove(object.transform, object.rigidBody, deltaTime);
 			calculatedPositions.push_back(temp);
 		}
 
@@ -362,7 +362,7 @@ namespace Game {
 		) {
 			Draw::Background(renderer, backgroundColor);
 
-			Entity::ForEach<Transform::Transform, Moveable::MoveData>(entitiesBuffor, ranges.data(), ranges.size(), Move::CalculateMove);
+			Entity::ForEach<Transform::Transform, RigidBody::RigidBody>(entitiesBuffor, ranges.data(), ranges.size(), Move::CalculateMove);
 
 			//for (size i = 0; i < entitiesLength; i++) {
 			//	//debug[i * 3] = i + '0'; // 1, 2

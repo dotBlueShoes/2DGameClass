@@ -2,13 +2,13 @@
 #include "../Framework.hpp"
 #include "../Math/Math.hpp"
 #include "Transform.hpp"
-#include "Log.hpp"
+#include "../Log.hpp"
 
-namespace Moveable {
+namespace RigidBody {
 
 	const Vector::Vector2<float> zero { 0, 0 };
 
-	struct MoveData {
+	struct RigidBody {
 		Vector::Vector2<float> velocity;
 	};
 
@@ -21,11 +21,11 @@ namespace Moveable {
 
 	constexpr const Vector::Vector2<float> CalculateMove(
 		const Transform::Transform& transform,
-		const MoveData& moveable,
+		const RigidBody& rigidBody,
 		const float& deltaTime
 	) {
-		return { transform.position.x + moveable.velocity.x * deltaTime,
-			transform.position.y + moveable.velocity.y * deltaTime };
+		return { transform.position.x + rigidBody.velocity.x * deltaTime,
+			transform.position.y + rigidBody.velocity.y * deltaTime };
 	}
 
 }

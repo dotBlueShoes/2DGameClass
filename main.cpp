@@ -27,10 +27,64 @@ int SDL_main(int argc, char** argv) {
 	Surface::Square squareSurface1 { 60, 60 };
 
 	// Prefabs
-	prefab Entity::PlayerCircle prefabPlayerCircle { Transform::zero, circleSurface1, { 30 }, { Moveable::GetRandomAngleForce(80.0f) } };
+	prefab Entity::PlayerCircle prefabPlayerCircle { Transform::zero, circleSurface1, { 30 }, { RigidBody::GetRandomAngleForce(80.0f) } };
 	// - we know 1 st element is ( Transform::Transform Surface::Circle Collision::CircleCollision Moveable::MoveData )
-	const Entity::PlayerSquare prefabPlayerSquare { Transform::zero, squareSurface1, { 60, 60 }, { Moveable::GetRandomAngleForce(80.0f) } };
+	const Entity::PlayerSquare prefabPlayerSquare { Transform::zero, squareSurface1, { 60, 60 }, { RigidBody::GetRandomAngleForce(80.0f) } };
 	// - we know 2 st element is ( Transform::Transform Surface::Square Collision::SquareCollision Moveable::MoveData )
+
+	// Entity::EntitiesBuffor entitiesBuffor (
+	//	{ Component::Transform, 10 },
+	//	{ Component::RigidBody, 8 },
+	//	{ Component::Surface, 14 }
+	// );
+
+	// value1 add value2
+	// return1 add value1 value1
+	// return1 return2 add value1 value2
+	// return1 return2 add value1 value2 value3 value4 value5 value6 value7 value8 // possible simd instruction ?
+
+	///! // The new way of creating entities !
+	///! 
+
+	size entitiesCount(0);
+	
+	Entity::ComponentsBuffor transforms(Entity::CreateComponentsBuffor(10, 1));
+	Entity::ComponentsBuffor rigidBodys(Entity::CreateComponentsBuffor(10, 1));
+	Entity::ComponentsBuffor surfaces(Entity::CreateComponentsBuffor(10, 1));
+	
+	//auto& sample = prefabPlayerCircle.transform;
+
+	//Entity::CreateEntitiesComponentCPY<Entity::PlayerCircle, Transform::Transform>(
+	//	transforms, 
+	//	prefabPlayerCircle, 
+	//	offsetof(Entity::PlayerCircle, Entity::PlayerCircle::transform),
+	//	1, 
+	//	entitiesCount
+	//);
+
+	//Entity::CreateEntitiesCPYA<Entity::PlayerCircle>(transforms, rigidBodys, surfaces, prefabPlayerCircle, 1, entitiesCount);
+
+	//std::cout << sizeof Entity::PlayerCircle << std::endl;
+	//;
+	
+	// Entity::CreateEntitiesComponentCPY<Transform::Transform>(componentBuffor, prefabPlayerCircle, prefabComponentOffset, count, outCount)
+	// sizeof Transform, sizeof RigidBody, sizeof Surface
+
+	// { // Game
+	// 	MainWindow mainWindow;
+	// 	Renderer mainRenderer;
+	// 	Game::Create(windowStruct, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC, mainWindow, mainRenderer);
+	// 	Game::MainLoop(mainRenderer, windowStruct.backgroundColor, entitiesBufforLength, entitiesBuffor);
+	// 	Game::Destroy(mainWindow, mainRenderer);
+	// }
+	
+	Entity::DeleteComponentsBuffor(transforms);
+	Entity::DeleteComponentsBuffor(rigidBodys);
+	Entity::DeleteComponentsBuffor(surfaces);
+
+	///!
+	///!
+
 
 	// Initial Entity Buffor
 	size entitiesBufforLength(2);
