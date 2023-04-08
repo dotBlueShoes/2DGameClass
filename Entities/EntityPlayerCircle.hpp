@@ -7,31 +7,30 @@
 
 namespace Entity {
 
-	struct PlayerCircle { /* 36 bytes */
-		Transform::Transform transform; // 5 * 4 = 20
-		Surface::Circle surface; // 1 * 4 = 4
-		Collision::Circle collision; // 1 * 4 = 4
-		RigidBody::RigidBody rigidBody; // 2 * 4 = 8
+	struct PlayerCircle {
+		Transform::Transform transform;
+		Surface::Circle surface;
+		Collision::Circle collision;
+		RigidBody::RigidBody rigidBody;
 
-		constexpr inline size GetComponentsCount() { return 4; }
+		constexpr inline static const size GetComponentsCount() { return 4; }
 
-		template <size index>
-		constexpr inline size GetComponentOffset() {
+		//template <size index>
+		constexpr inline static const size GetComponentOffset(const size& index) {
+			assert(index >= GetComponentsCount());
 
-			// Byte Sizes
-			const size transform = 20;
-			const size surface = 4;
-			const size collision = 4;
-			const size rigidBody = 8;
+			const size sizes[] { 
+				sizeof transform, sizeof surface, 
+				sizeof collision, sizeof rigidBody 
+			};
 
-			switch constexpr (index) {
-				case 0: return 0;
-				case 1: return transform;
-				case 2: return transform + surface;
-				case 3: return transform + surface + collision;
-				case default: assert(true);
+			size result (0);
+
+			for (size i = 0; i < index; ++i) {
+				result += sizes[i];
 			}
 
+			return result;
 		}
 	};
 

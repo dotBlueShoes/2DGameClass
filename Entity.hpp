@@ -91,21 +91,26 @@ namespace Entity {
 		delete[] buffor.ranges;
 	}
 
-	struct SampleEntityComponentREF {
-		ComponentsBuffor* transforms;
-		ComponentsBuffor* rigidBodys;
-		ComponentsBuffor* surfaces;
-	};
+	//struct SampleEntityComponentREF {
+	//	ComponentsBuffor* transforms;
+	//	ComponentsBuffor* rigidBodys;
+	//	ComponentsBuffor* surfaces;
+	//};
 
-	template <class EntityType, class CompoenentType>
+	template <class EntityType>
 	block CreateEntitiesComponentCPY(
 		/*out*/ ComponentsBuffor& buffor,
 		/*in*/	const EntityType& entity,
-		/*in*/  const size& componentOffset,
 		/*in*/	const size& count,
 		/*out*/ size& entitiesCount
 	) {
-	
+		size j = EntityType::GetComponentOffset(0);
+
+		for (size i = 0; i < count; i++) {
+			buffor.components[i] = ((char*)((void*)(&entity))) + j;
+		}
+		
+		std::cout << std::to_string(j) << std::endl;
 	}
 
 	template <class T>

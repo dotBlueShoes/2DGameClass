@@ -52,15 +52,24 @@ int SDL_main(int argc, char** argv) {
 	Entity::ComponentsBuffor rigidBodys(Entity::CreateComponentsBuffor(10, 1));
 	Entity::ComponentsBuffor surfaces(Entity::CreateComponentsBuffor(10, 1));
 	
-	//auto& sample = prefabPlayerCircle.transform;
+	std::cout << transforms.components[0] << std::endl;
+	std::cout << (Entity::Component*)(&prefabPlayerCircle.transform) << std::endl;
 
-	//Entity::CreateEntitiesComponentCPY<Entity::PlayerCircle, Transform::Transform>(
-	//	transforms, 
-	//	prefabPlayerCircle, 
-	//	offsetof(Entity::PlayerCircle, Entity::PlayerCircle::transform),
-	//	1, 
-	//	entitiesCount
-	//);
+	Entity::CreateEntitiesComponentCPY<Entity::PlayerCircle>(
+		transforms, 
+		prefabPlayerCircle, 
+		1, 
+		entitiesCount
+	);
+
+	std::cout << transforms.components[0] << std::endl;
+
+	// TODO..
+	// This works great. but. (i think it works...)
+	// Instead of calling invidually for each component it would make more sense to call once but 
+	//  the function needs to take [n] template parameters and [n] arguments (buffors) and
+	//  operate on those.
+
 
 	//Entity::CreateEntitiesCPYA<Entity::PlayerCircle>(transforms, rigidBodys, surfaces, prefabPlayerCircle, 1, entitiesCount);
 
